@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// The type of an element in the abstract syntax tree.
 public protocol CType: CustomStringConvertible {
@@ -54,6 +52,7 @@ extension ClangTypeBacked {
   }
 }
 
+extension CXType: @retroactive CustomStringConvertible {}
 extension CXType: CType {
   /// Returns self, unmodified
   public func asClang() -> CXType {

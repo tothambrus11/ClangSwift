@@ -1,7 +1,5 @@
 import XCTest
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 @testable import Clang
 
 class ClangTests: XCTestCase {

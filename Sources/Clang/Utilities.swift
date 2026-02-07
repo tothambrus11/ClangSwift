@@ -1,6 +1,13 @@
-#if SWIFT_PACKAGE
-import cclang
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(ucrt)
+import ucrt
 #endif
+
+import cclang
+
 
 internal extension Bool {
   func asClang() -> Int32 {

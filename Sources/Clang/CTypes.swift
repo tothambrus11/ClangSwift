@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// MARK: Special Types
 public struct RecordType: ClangTypeBacked {
