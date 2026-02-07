@@ -22,6 +22,9 @@ public enum TypeLayoutError: Error {
   /// The field specified was not found or invalid
   case invalidFieldName
 
+  /// The type is undeduced.
+  case undeduced
+
   internal init?(clang: CXTypeLayoutError) {
     switch clang {
     case CXTypeLayoutError_Dependent:
@@ -34,6 +37,8 @@ public enum TypeLayoutError: Error {
       self = .notConstantSize
     case CXTypeLayoutError_InvalidFieldName:
       self = .invalidFieldName
+    case CXTypeLayoutError_Undeduced:
+      self = .undeduced
     default:
       return nil
     }
@@ -132,6 +137,42 @@ extension CType {
   public var cxxRefQualifier: RefQualifier? {
     return RefQualifier(clang: clang_Type_getCXXRefQualifier(asClang()))
   }
+
+  /// Retrieve the nullability kind of a pointer type.
+  public var nullability: TypeNullabilityKind? {
+    return TypeNullabilityKind(clang: clang_Type_getNullability(asClang()))
+  }
+}
+
+public enum TypeNullabilityKind {
+  /// Values of this type can never be null.
+  case nonNull
+
+  /// Values of this type can be null.
+  case nullable
+
+  /// Whether values of this type can be null is (explicitly)
+  /// unspecified. This captures a (fairly rare) case where we
+  /// can't conclude anything about the nullability of the type even
+  /// though it has been considered.
+  case unspecified
+
+  /// Generally behaves like Nullable, except when used in a block parameter that
+  /// was imported into a swift async method. There, swift will assume that the
+  /// parameter can get null even if no error occurred. _Nullable parameters are
+  /// assumed to only get null on error.
+  case nullableResult
+
+  internal init?(clang: CXTypeNullabilityKind) {
+    switch clang {
+    case CXTypeNullability_NonNull: self = .nonNull
+    case CXTypeNullability_Nullable: self = .nullable
+    case CXTypeNullability_Unspecified: self = .unspecified
+    case CXTypeNullability_NullableResult: self = .nullableResult
+    case CXTypeNullability_Invalid: return nil
+    default: return nil
+    }
+  }
 }
 
 /// Represents the qualifier for C++ methods that determines how the
@@ -147,7 +188,9 @@ public enum RefQualifier {
     switch clang {
     case CXRefQualifier_LValue: self = .lvalue
     case CXRefQualifier_RValue: self = .rvalue
+    case CXRefQualifier_None: return nil
     default: return nil
     }
   }
 }
+

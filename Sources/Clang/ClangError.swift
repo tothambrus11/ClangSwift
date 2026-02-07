@@ -17,6 +17,7 @@ public enum ClangError: Error {
   /// Constructs a ClangError from the provided CXErrorCode
   init?(clang: CXErrorCode) {
     switch clang {
+    case CXError_Success: return nil
     case CXError_Failure: self = .failure
     case CXError_Crashed: self = .crashed
     case CXError_ASTReadError: self = .astRead
@@ -47,6 +48,7 @@ public enum ClangSaveError: Error {
   /// Constructs a ClangSaveError from the provided CXSaveError.
   init?(clang: CXSaveError) {
     switch clang {
+    case CXSaveError_None: return nil
     case CXSaveError_Unknown: self = .unknown
     case CXSaveError_TranslationErrors: self = .translationErrors
     case CXSaveError_InvalidTU: self = .invalidTranslationUnit
@@ -54,3 +56,4 @@ public enum ClangSaveError: Error {
     }
   }
 }
+

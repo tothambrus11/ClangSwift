@@ -1,5 +1,34 @@
 import cclang
 
+/// Describes the availability of a particular entity, which indicates
+/// whether the use of this entity will result in a warning or error due to
+/// it being deprecated or unavailable.
+public enum AvailabilityKind {
+  /// The entity is available.
+  case available
+
+  /// The entity is available, but has been deprecated (and its use is
+  /// not recommended).
+  case deprecated
+
+  /// The entity is not available; any use of it will be an error.
+  case notAvailable
+
+  /// The entity is available, but not accessible; any use of it will be
+  /// an error.
+  case notAccessible
+
+  internal init?(clang: CXAvailabilityKind) {
+    switch clang {
+    case CXAvailability_Available: self = .available
+    case CXAvailability_Deprecated: self = .deprecated
+    case CXAvailability_NotAvailable: self = .notAvailable
+    case CXAvailability_NotAccessible: self = .notAccessible
+    default: return nil
+    }
+  }
+}
+
 /// Describes the availability of a given declaration for each platform.
 public struct Availability {
   /// Whether this declaration is unconditionally deprecated for all platforms.

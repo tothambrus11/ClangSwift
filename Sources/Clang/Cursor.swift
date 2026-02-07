@@ -268,6 +268,23 @@ extension Cursor {
       platforms: platforms)
   }
 
+  /// Determine the availability of the entity that this cursor refers to,
+  /// taking the current target platform into account.
+  public var availabilityKind: AvailabilityKind? {
+    return AvailabilityKind(clang: clang_getCursorAvailability(asClang()))
+  }
+
+  /// Determine the linkage of the entity referred to by a given cursor.
+  public var linkage: LinkageKind? {
+    return LinkageKind(clang: clang_getCursorLinkage(asClang()))
+  }
+
+  /// Determine the "thread-local storage (TLS) kind" of the declaration
+  /// referred to by a cursor.
+  public var tlsKind: TLSKind? {
+    return TLSKind(clang: clang_getCursorTLSKind(asClang()))
+  }
+
   /// Returns the storage class for a function or variable declaration.
   public var storageClass: StorageClass? {
     return StorageClass(clang: clang_Cursor_getStorageClass(asClang()))
@@ -419,6 +436,52 @@ public enum VisibilityKind {
     case CXVisibility_Hidden: self = .hidden
     case CXVisibility_Protected: self = .protected
     case CXVisibility_Default: self = .default
+    case CXVisibility_Invalid: return nil
+    default: return nil
+    }
+  }
+}
+
+/// Describe the linkage of the entity referred to by a cursor.
+public enum LinkageKind {
+  /// This is the linkage for variables, parameters, and so on that
+  /// have automatic storage.  This covers normal (non-extern) local variables.
+  case noLinkage
+
+  /// This is the linkage for static variables and static functions.
+  case `internal`
+
+  /// This is the linkage for entities with external linkage that live
+  /// in C++ anonymous namespaces.
+  case uniqueExternal
+
+  /// This is the linkage for entities with true, external linkage.
+  case external
+
+  internal init?(clang: CXLinkageKind) {
+    switch clang {
+    case CXLinkage_NoLinkage: self = .noLinkage
+    case CXLinkage_Internal: self = .internal
+    case CXLinkage_UniqueExternal: self = .uniqueExternal
+    case CXLinkage_External: self = .external
+    case CXLinkage_Invalid: return nil
+    default: return nil
+    }
+  }
+}
+
+/// Describe the "thread-local storage (TLS) kind" of the declaration
+/// referred to by a cursor.
+public enum TLSKind {
+  case none
+  case dynamic
+  case `static`
+
+  internal init?(clang: CXTLSKind) {
+    switch clang {
+    case CXTLS_None: self = .none
+    case CXTLS_Dynamic: self = .dynamic
+    case CXTLS_Static: self = .static
     default: return nil
     }
   }

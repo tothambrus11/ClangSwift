@@ -10,13 +10,21 @@ public enum CallingConvention {
   case x86Pascal
   case aapcs
   case aapcs_vfp
+  case x86RegCall
   case intelOclBicc
+  case win64
   case x86_64Win64
   case x86_64SysV
   case x86VectorCall
   case swift
+  case swiftAsync
   case preserveMost
   case preserveAll
+  case aarch64VectorCall
+  case aarch64SVEPCS
+  case m68kRTD
+  case preserveNone
+  case riscvVectorCall
   case unexposed
 
   init?(clang: CXCallingConv) {
@@ -29,13 +37,21 @@ public enum CallingConvention {
     case CXCallingConv_X86Pascal: self = .x86Pascal
     case CXCallingConv_AAPCS: self = .aapcs
     case CXCallingConv_AAPCS_VFP: self = .aapcs_vfp
+    case CXCallingConv_X86RegCall: self = .x86RegCall
     case CXCallingConv_IntelOclBicc: self = .intelOclBicc
+    case CXCallingConv_Win64: self = .win64
     case CXCallingConv_X86_64Win64: self = .x86_64Win64
     case CXCallingConv_X86_64SysV: self = .x86_64SysV
     case CXCallingConv_X86VectorCall: self = .x86VectorCall
     case CXCallingConv_Swift: self = .swift
+    case CXCallingConv_SwiftAsync: self = .swiftAsync
     case CXCallingConv_PreserveMost: self = .preserveMost
     case CXCallingConv_PreserveAll: self = .preserveAll
+    case CXCallingConv_AArch64VectorCall: self = .aarch64VectorCall
+    case CXCallingConv_AArch64SVEPCS: self = .aarch64SVEPCS
+    case CXCallingConv_M68kRTD: self = .m68kRTD
+    case CXCallingConv_PreserveNone: self = .preserveNone
+    case CXCallingConv_RISCVVectorCall: self = .riscvVectorCall
     case CXCallingConv_Invalid: return nil
     case CXCallingConv_Unexposed: self = .unexposed
     default: fatalError("invalid CXCallingConv \(clang)")

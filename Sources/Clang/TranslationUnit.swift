@@ -74,14 +74,16 @@ public struct TranslationUnitOptions: OptionSet, Sendable {
       CXTranslationUnit_ForSerialization.rawValue)
 
   /// DEPRECATED: Enabled chained precompiled preambles in C++.
-  /// Note: this is a *temporary* option that is available only while we are
-  /// testing C++ precompiled preamble support. It is deprecated.
+  ///
+  /// Note: this is a *temporary* option that is available only while
+  /// we are testing C++ precompiled preamble support. It is deprecated.
   public static let cxxChainedPCH = TranslationUnitOptions(
     rawValue:
       CXTranslationUnit_CXXChainedPCH.rawValue)
 
   /// Used to indicate that function/method bodies should be skipped while
   /// parsing.
+  /// 
   /// This option can be used to search for declarations/definitions while
   /// ignoring the usages.
   public static let skipFunctionBodies = TranslationUnitOptions(
@@ -103,14 +105,53 @@ public struct TranslationUnitOptions: OptionSet, Sendable {
       CXTranslationUnit_CreatePreambleOnFirstParse.rawValue)
 
   /// Do not stop processing when fatal errors are encountered.
+  ///
   /// When fatal errors are encountered while parsing a translation unit,
   /// semantic analysis is typically stopped early when compiling code. A common
-  /// source for fatal errors are unresolvable include files. For the purposes
-  /// of an IDE, this is undesirable behavior and as much information as
-  /// possible should be reported. Use this flag to enable this behavior.
+  /// source for fatal errors are unresolvable include files. For the
+  /// purposes of an IDE, this is undesirable behavior and as much information
+  /// as possible should be reported. Use this flag to enable this behavior.
   public static let keepGoing = TranslationUnitOptions(
     rawValue:
       CXTranslationUnit_KeepGoing.rawValue)
+
+  /// Sets the preprocessor in a mode for parsing a single file only.
+  public static let singleFileParse = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_SingleFileParse.rawValue)
+
+  /// Used in combination with CXTranslationUnit_SkipFunctionBodies to
+  /// constrain the skipping of function bodies to the preamble.
+  ///
+  /// The function bodies of the main file are not skipped.
+  public static let limitSkipFunctionBodiesToPreamble = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_LimitSkipFunctionBodiesToPreamble.rawValue)
+
+  /// Used to indicate that attributed types should be included in CXType.
+  public static let includeAttributedTypes = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_IncludeAttributedTypes.rawValue)
+
+  /// Used to indicate that implicit attributes should be visited.
+  public static let visitImplicitAttributes = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_VisitImplicitAttributes.rawValue)
+
+  /// Used to indicate that non-errors from included files should be ignored. 
+  /// 
+  /// If set, `clang_getDiagnosticSetFromTU()` will not report e.g. warnings from 
+  /// included files anymore. This speeds up `clang_getDiagnosticSetFromTU()` for 
+  /// the case where these warnings are not of interest, as for an IDE for 
+  /// example, which typically shows only the diagnostics in the main file. 
+  public static let ignoreNonErrorsFromIncludedFiles = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_IgnoreNonErrorsFromIncludedFiles.rawValue)
+
+  /// Tells the preprocessor not to skip excluded conditional blocks.
+  public static let retainExcludedConditionalBlocks = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_RetainExcludedConditionalBlocks.rawValue)
 }
 
 /// Flags that control how translation units are saved.

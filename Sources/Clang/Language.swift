@@ -14,7 +14,9 @@ public enum Language {
     case CXLanguage_C: self = .c
     case CXLanguage_ObjC: self = .objectiveC
     case CXLanguage_CPlusPlus: self = .cPlusPlus
+    case CXLanguage_Invalid: return nil
     default: return nil
     }
   }
 }
+

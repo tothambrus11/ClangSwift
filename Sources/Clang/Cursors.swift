@@ -741,6 +741,56 @@ public struct OMPArraySectionExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
+
+public struct ArraySectionExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct FixedPointLiteral: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPArrayShapingExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPIteratorExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct CXXAddrspaceCastExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ConceptSpecializationExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct RequiresExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct CXXParenListInitExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct PackIndexingExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct BuiltinBitCastExpr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
 /// Represents an @available(...) check.
 public struct ObjCAvailabilityCheckExpr: ClangCursorBacked {
   let clang: CXCursor
@@ -1113,6 +1163,261 @@ public struct OMPTargetParallelForSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
+
+public struct OMPTargetSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTeamsDistributeDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTeamsDistributeSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTeamsDistributeParallelForDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTeamsDistributeParallelForSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetTeamsDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetTeamsDistributeDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetTeamsDistributeParallelForDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetTeamsDistributeParallelForSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetTeamsDistributeSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPMasterTaskLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelMasterTaskLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPMasterTaskLoopSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelMasterTaskLoopSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelMasterDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPDepobjDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPScanDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTileDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPCanonicalLoop: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPInteropDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPDispatchDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPMaskedDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPUnrollDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPMetaDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPGenericLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTeamsGenericLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetTeamsGenericLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelGenericLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPTargetParallelGenericLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelMaskedDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPMaskedTaskLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPMaskedTaskLoopSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelMaskedTaskLoopDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPParallelMaskedTaskLoopSimdDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPErrorDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPScopeDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPReverseDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPInterchangeDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OMPAssumeDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCComputeConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCLoopConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCCombinedConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCDataConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCEnterDataConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCExitDataConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCHostDataConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCWaitConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCInitConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCShutdownConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCSetConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct OpenACCUpdateConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
 /// Cursor that represents the translation unit itself.
 /// The translation unit cursor exists primarily to act as the root cursor for
 /// traversing the contents of a translation unit.
@@ -1221,6 +1526,126 @@ public struct DLLImport: ClangCursorBacked {
 }
 
 
+public struct NSReturnsRetained: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct NSReturnsNotRetained: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct NSReturnsAutoreleased: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct NSConsumesSelf: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct NSConsumed: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCException: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCNSObject: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCIndependentClass: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCPreciseLifetime: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCReturnsInnerPointer: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCRequiresSuper: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCRootClass: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCSubclassingRestricted: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCExplicitProtocolImpl: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCDesignatedInitializer: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCRuntimeVisible: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ObjCBoxable: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct FlagEnum: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ConvergentAttr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct WarnUnusedAttr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct WarnUnusedResultAttr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct AlignedAttr: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct FriendDecl: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
+public struct ConceptDecl: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+
 public struct PreprocessingDirective: ClangCursorBacked {
   let clang: CXCursor
 }
@@ -1248,6 +1673,23 @@ public struct OverloadCandidate: ClangCursorBacked {
 func convertCursor(_ clang: CXCursor) -> Cursor? {
   if clang_Cursor_isNull(clang) != 0 { return nil }
   switch clang.kind {
+  case CXCursor_FirstDecl,
+       CXCursor_LastDecl,
+       CXCursor_FirstRef,
+       CXCursor_LastRef,
+       CXCursor_FirstInvalid,
+       CXCursor_LastInvalid,
+       CXCursor_FirstExpr,
+       CXCursor_LastExpr,
+       CXCursor_FirstStmt,
+       CXCursor_LastStmt,
+       CXCursor_FirstAttr,
+       CXCursor_LastAttr,
+       CXCursor_FirstPreprocessing,
+       CXCursor_LastPreprocessing,
+       CXCursor_FirstExtraDecl,
+       CXCursor_LastExtraDecl:
+    fatalError("unexpected CXCursorKind sentinel \(clang)")
   case CXCursor_UnexposedDecl: return UnexposedDecl(clang: clang)
   case CXCursor_StructDecl: return StructDecl(clang: clang)
   case CXCursor_UnionDecl: return UnionDecl(clang: clang)
@@ -1313,9 +1755,11 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_ImaginaryLiteral: return ImaginaryLiteral(clang: clang)
   case CXCursor_StringLiteral: return StringLiteral(clang: clang)
   case CXCursor_CharacterLiteral: return CharacterLiteral(clang: clang)
+  case CXCursor_FixedPointLiteral: return FixedPointLiteral(clang: clang)
   case CXCursor_ParenExpr: return ParenExpr(clang: clang)
   case CXCursor_UnaryOperator: return UnaryOperator(clang: clang)
   case CXCursor_ArraySubscriptExpr: return ArraySubscriptExpr(clang: clang)
+  case CXCursor_ArraySectionExpr: return ArraySectionExpr(clang: clang)
   case CXCursor_BinaryOperator: return BinaryOperator(clang: clang)
   case CXCursor_CompoundAssignOperator: return CompoundAssignOperator(clang: clang)
   case CXCursor_ConditionalOperator: return ConditionalOperator(clang: clang)
@@ -1331,6 +1775,7 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_CXXReinterpretCastExpr: return CXXReinterpretCastExpr(clang: clang)
   case CXCursor_CXXConstCastExpr: return CXXConstCastExpr(clang: clang)
   case CXCursor_CXXFunctionalCastExpr: return CXXFunctionalCastExpr(clang: clang)
+  case CXCursor_CXXAddrspaceCastExpr: return CXXAddrspaceCastExpr(clang: clang)
   case CXCursor_CXXTypeidExpr: return CXXTypeidExpr(clang: clang)
   case CXCursor_CXXBoolLiteralExpr: return CXXBoolLiteralExpr(clang: clang)
   case CXCursor_CXXNullPtrLiteralExpr: return CXXNullPtrLiteralExpr(clang: clang)
@@ -1338,6 +1783,7 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_CXXThrowExpr: return CXXThrowExpr(clang: clang)
   case CXCursor_CXXNewExpr: return CXXNewExpr(clang: clang)
   case CXCursor_CXXDeleteExpr: return CXXDeleteExpr(clang: clang)
+  case CXCursor_BuiltinBitCastExpr: return BuiltinBitCastExpr(clang: clang)
   case CXCursor_UnaryExpr: return UnaryExpr(clang: clang)
   case CXCursor_ObjCStringLiteral: return ObjCStringLiteral(clang: clang)
   case CXCursor_ObjCEncodeExpr: return ObjCEncodeExpr(clang: clang)
@@ -1346,7 +1792,13 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_ObjCBridgedCastExpr: return ObjCBridgedCastExpr(clang: clang)
   case CXCursor_PackExpansionExpr: return PackExpansionExpr(clang: clang)
   case CXCursor_SizeOfPackExpr: return SizeOfPackExpr(clang: clang)
+  case CXCursor_PackIndexingExpr: return PackIndexingExpr(clang: clang)
   case CXCursor_LambdaExpr: return LambdaExpr(clang: clang)
+  case CXCursor_ConceptSpecializationExpr: return ConceptSpecializationExpr(clang: clang)
+  case CXCursor_RequiresExpr: return RequiresExpr(clang: clang)
+  case CXCursor_CXXParenListInitExpr: return CXXParenListInitExpr(clang: clang)
+  case CXCursor_OMPArrayShapingExpr: return OMPArrayShapingExpr(clang: clang)
+  case CXCursor_OMPIteratorExpr: return OMPIteratorExpr(clang: clang)
   case CXCursor_ObjCBoolLiteralExpr: return ObjCBoolLiteralExpr(clang: clang)
   case CXCursor_ObjCSelfExpr: return ObjCSelfExpr(clang: clang)
   case CXCursor_ObjCAvailabilityCheckExpr: return ObjCAvailabilityCheckExpr(clang: clang)
@@ -1421,6 +1873,57 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_OMPDistributeParallelForSimdDirective: return OMPDistributeParallelForSimdDirective(clang: clang)
   case CXCursor_OMPDistributeSimdDirective: return OMPDistributeSimdDirective(clang: clang)
   case CXCursor_OMPTargetParallelForSimdDirective: return OMPTargetParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPTargetSimdDirective: return OMPTargetSimdDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeDirective: return OMPTeamsDistributeDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeSimdDirective: return OMPTeamsDistributeSimdDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeParallelForDirective: return OMPTeamsDistributeParallelForDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeParallelForSimdDirective: return OMPTeamsDistributeParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDirective: return OMPTargetTeamsDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeDirective: return OMPTargetTeamsDistributeDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeParallelForDirective: return OMPTargetTeamsDistributeParallelForDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeParallelForSimdDirective: return OMPTargetTeamsDistributeParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeSimdDirective: return OMPTargetTeamsDistributeSimdDirective(clang: clang)
+  case CXCursor_OMPMasterTaskLoopDirective: return OMPMasterTaskLoopDirective(clang: clang)
+  case CXCursor_OMPParallelMasterTaskLoopDirective: return OMPParallelMasterTaskLoopDirective(clang: clang)
+  case CXCursor_OMPMasterTaskLoopSimdDirective: return OMPMasterTaskLoopSimdDirective(clang: clang)
+  case CXCursor_OMPParallelMasterTaskLoopSimdDirective: return OMPParallelMasterTaskLoopSimdDirective(clang: clang)
+  case CXCursor_OMPParallelMasterDirective: return OMPParallelMasterDirective(clang: clang)
+  case CXCursor_OMPDepobjDirective: return OMPDepobjDirective(clang: clang)
+  case CXCursor_OMPScanDirective: return OMPScanDirective(clang: clang)
+  case CXCursor_OMPTileDirective: return OMPTileDirective(clang: clang)
+  case CXCursor_OMPCanonicalLoop: return OMPCanonicalLoop(clang: clang)
+  case CXCursor_OMPInteropDirective: return OMPInteropDirective(clang: clang)
+  case CXCursor_OMPDispatchDirective: return OMPDispatchDirective(clang: clang)
+  case CXCursor_OMPMaskedDirective: return OMPMaskedDirective(clang: clang)
+  case CXCursor_OMPUnrollDirective: return OMPUnrollDirective(clang: clang)
+  case CXCursor_OMPMetaDirective: return OMPMetaDirective(clang: clang)
+  case CXCursor_OMPGenericLoopDirective: return OMPGenericLoopDirective(clang: clang)
+  case CXCursor_OMPTeamsGenericLoopDirective: return OMPTeamsGenericLoopDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsGenericLoopDirective: return OMPTargetTeamsGenericLoopDirective(clang: clang)
+  case CXCursor_OMPParallelGenericLoopDirective: return OMPParallelGenericLoopDirective(clang: clang)
+  case CXCursor_OMPTargetParallelGenericLoopDirective: return OMPTargetParallelGenericLoopDirective(clang: clang)
+  case CXCursor_OMPParallelMaskedDirective: return OMPParallelMaskedDirective(clang: clang)
+  case CXCursor_OMPMaskedTaskLoopDirective: return OMPMaskedTaskLoopDirective(clang: clang)
+  case CXCursor_OMPMaskedTaskLoopSimdDirective: return OMPMaskedTaskLoopSimdDirective(clang: clang)
+  case CXCursor_OMPParallelMaskedTaskLoopDirective: return OMPParallelMaskedTaskLoopDirective(clang: clang)
+  case CXCursor_OMPParallelMaskedTaskLoopSimdDirective: return OMPParallelMaskedTaskLoopSimdDirective(clang: clang)
+  case CXCursor_OMPErrorDirective: return OMPErrorDirective(clang: clang)
+  case CXCursor_OMPScopeDirective: return OMPScopeDirective(clang: clang)
+  case CXCursor_OMPReverseDirective: return OMPReverseDirective(clang: clang)
+  case CXCursor_OMPInterchangeDirective: return OMPInterchangeDirective(clang: clang)
+  case CXCursor_OMPAssumeDirective: return OMPAssumeDirective(clang: clang)
+  case CXCursor_OpenACCComputeConstruct: return OpenACCComputeConstruct(clang: clang)
+  case CXCursor_OpenACCLoopConstruct: return OpenACCLoopConstruct(clang: clang)
+  case CXCursor_OpenACCCombinedConstruct: return OpenACCCombinedConstruct(clang: clang)
+  case CXCursor_OpenACCDataConstruct: return OpenACCDataConstruct(clang: clang)
+  case CXCursor_OpenACCEnterDataConstruct: return OpenACCEnterDataConstruct(clang: clang)
+  case CXCursor_OpenACCExitDataConstruct: return OpenACCExitDataConstruct(clang: clang)
+  case CXCursor_OpenACCHostDataConstruct: return OpenACCHostDataConstruct(clang: clang)
+  case CXCursor_OpenACCWaitConstruct: return OpenACCWaitConstruct(clang: clang)
+  case CXCursor_OpenACCInitConstruct: return OpenACCInitConstruct(clang: clang)
+  case CXCursor_OpenACCShutdownConstruct: return OpenACCShutdownConstruct(clang: clang)
+  case CXCursor_OpenACCSetConstruct: return OpenACCSetConstruct(clang: clang)
+  case CXCursor_OpenACCUpdateConstruct: return OpenACCUpdateConstruct(clang: clang)
   case CXCursor_TranslationUnit: return TranslationUnitCursor(clang: clang)
   case CXCursor_UnexposedAttr: return UnexposedAttr(clang: clang)
   case CXCursor_IBActionAttr: return IBActionAttr(clang: clang)
@@ -1442,11 +1945,35 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_VisibilityAttr: return VisibilityAttr(clang: clang)
   case CXCursor_DLLExport: return DLLExport(clang: clang)
   case CXCursor_DLLImport: return DLLImport(clang: clang)
+  case CXCursor_NSReturnsRetained: return NSReturnsRetained(clang: clang)
+  case CXCursor_NSReturnsNotRetained: return NSReturnsNotRetained(clang: clang)
+  case CXCursor_NSReturnsAutoreleased: return NSReturnsAutoreleased(clang: clang)
+  case CXCursor_NSConsumesSelf: return NSConsumesSelf(clang: clang)
+  case CXCursor_NSConsumed: return NSConsumed(clang: clang)
+  case CXCursor_ObjCException: return ObjCException(clang: clang)
+  case CXCursor_ObjCNSObject: return ObjCNSObject(clang: clang)
+  case CXCursor_ObjCIndependentClass: return ObjCIndependentClass(clang: clang)
+  case CXCursor_ObjCPreciseLifetime: return ObjCPreciseLifetime(clang: clang)
+  case CXCursor_ObjCReturnsInnerPointer: return ObjCReturnsInnerPointer(clang: clang)
+  case CXCursor_ObjCRequiresSuper: return ObjCRequiresSuper(clang: clang)
+  case CXCursor_ObjCRootClass: return ObjCRootClass(clang: clang)
+  case CXCursor_ObjCSubclassingRestricted: return ObjCSubclassingRestricted(clang: clang)
+  case CXCursor_ObjCExplicitProtocolImpl: return ObjCExplicitProtocolImpl(clang: clang)
+  case CXCursor_ObjCDesignatedInitializer: return ObjCDesignatedInitializer(clang: clang)
+  case CXCursor_ObjCRuntimeVisible: return ObjCRuntimeVisible(clang: clang)
+  case CXCursor_ObjCBoxable: return ObjCBoxable(clang: clang)
+  case CXCursor_FlagEnum: return FlagEnum(clang: clang)
+  case CXCursor_ConvergentAttr: return ConvergentAttr(clang: clang)
+  case CXCursor_WarnUnusedAttr: return WarnUnusedAttr(clang: clang)
+  case CXCursor_WarnUnusedResultAttr: return WarnUnusedResultAttr(clang: clang)
+  case CXCursor_AlignedAttr: return AlignedAttr(clang: clang)
   case CXCursor_PreprocessingDirective: return PreprocessingDirective(clang: clang)
   case CXCursor_MacroDefinition: return MacroDefinition(clang: clang)
   case CXCursor_MacroExpansion: return MacroExpansion(clang: clang)
   case CXCursor_MacroInstantiation: return MacroInstantiation(clang: clang)
   case CXCursor_InclusionDirective: return InclusionDirective(clang: clang)
+  case CXCursor_FriendDecl: return FriendDecl(clang: clang)
+  case CXCursor_ConceptDecl: return ConceptDecl(clang: clang)
   case CXCursor_ModuleImportDecl: return ModuleImportDecl(clang: clang)
   case CXCursor_TypeAliasTemplateDecl: return TypeAliasTemplateDecl(clang: clang)
   case CXCursor_StaticAssert: return StaticAssert(clang: clang)
