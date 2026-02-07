@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 import Foundation
 
 /// Represents a file ID that's unique to each file in a translation unit.

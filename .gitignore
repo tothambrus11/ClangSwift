@@ -6,3 +6,4 @@
 Xcode/Modules/cclang/module.modulemap
 *.xcuserdatad
 *.resolved
+cclang.pc

@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// Describes the severity of a particular diagnostic.
 public enum DiagnosticSeverity {
@@ -62,7 +60,7 @@ public enum LoadDiagError: Error {
 /// Options to control the display of diagnostics.
 /// The values in this enum are meant to be combined to customize the
 /// behavior of `clang_formatDiagnostic().`
-public struct DiagnosticDisplayOptions: OptionSet {
+public struct DiagnosticDisplayOptions: OptionSet, Sendable {
   public typealias RawValue = CXDiagnosticDisplayOptions.RawValue
   public let rawValue: RawValue
   /// Creates a new DiagnosticDisplayOptions from a raw integer value.

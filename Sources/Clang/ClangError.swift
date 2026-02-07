@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
 import cclang
-#endif
 
 /// Represents the errors that can be thrown by libclang.
 public enum ClangError: Error {

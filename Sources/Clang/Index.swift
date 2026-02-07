@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// An index is a context in which translation units are created.
 public class Index {
@@ -46,7 +44,7 @@ public class Index {
 }
 
 /// Global options used to inform the Index.
-public struct GlobalOptions: OptionSet {
+public struct GlobalOptions: OptionSet, Sendable {
   public typealias RawValue = CXGlobalOptFlags.RawValue
   public let rawValue: RawValue
 
@@ -81,7 +79,7 @@ public struct GlobalOptions: OptionSet {
 
 
 /// Options for used for indexing actions.
-public struct IndexOptFlags: OptionSet {
+public struct IndexOptFlags: OptionSet, Sendable {
   public typealias RawValue = CXIndexOptFlags.RawValue
   public let rawValue: RawValue
 

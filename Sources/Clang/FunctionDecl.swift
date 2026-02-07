@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// Describes the calling convention of a function type
 public enum CallingConvention {
@@ -46,7 +44,7 @@ public enum CallingConvention {
 }
 
 /// Property attributes for an Objective-C @property declaration.
-public struct ObjCPropertyAttributes: OptionSet {
+public struct ObjCPropertyAttributes: OptionSet, Sendable {
   public typealias RawValue = CXObjCPropertyAttrKind.RawValue
   public let rawValue: RawValue
 

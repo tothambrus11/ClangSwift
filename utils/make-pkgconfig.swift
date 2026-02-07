@@ -1,59 +1,61 @@
 #!/usr/bin/env swift
 import Foundation
 
-#if os(Linux)
-  typealias Process = Task
-  let libCPP = "-L/usr/lib -lc++"
-#elseif os(macOS)
-  let libCPP = "-lc++"
-#endif
-
 /// Runs the specified program at the provided path.
 /// - parameter path: The full path of the executable you
 ///                   wish to run.
 /// - parameter args: The arguments you wish to pass to the
 ///                   process.
-/// - returns: The standard output of the process, or nil if it was empty.
-func run(_ path: String, args: [String] = []) -> String? {
-    print("Running \(path) \(args.joined(separator: " "))...")
-    let pipe = Pipe()
-    let process = Process()
-    process.launchPath = path
-    process.arguments = args
-    process.standardOutput = pipe
-    process.launch()
-    process.waitUntilExit()
+/// - returns: The standard output of the process
+func run(_ path: String, args: [String] = []) throws -> String {
+  print("Running \(path) \(args.joined(separator: " "))...")
+  let pipe = Pipe()
+  let process = Process()
+  process.launchPath = path
+  process.arguments = args
+  process.standardOutput = pipe
+  try process.run()
+  process.waitUntilExit()
 
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    guard let result = String(data: data, encoding: .utf8)?
-                        .trimmingCharacters(in: .whitespacesAndNewlines),
-              !result.isEmpty else { return nil }
-    return result
+  let data = pipe.fileHandleForReading.readDataToEndOfFile()
+  guard
+    let result = String(data: data, encoding: .utf8)?
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+  else { throw "Process output failed to be decoded" }
+  
+  if result.isEmpty {
+    throw "Process output was empty"
+  }
+  
+  return result
 }
 
 /// Finds the location of the provided binary on your system.
-func which(_ name: String) -> String? {
-    return run("/usr/bin/which", args: [name])
+func which(_ name: String) throws -> String {
+  return run("/usr/bin/which", args: [name])
 }
 
 extension String: Error {
   /// Replaces all occurrences of characters in the provided set with
   /// the provided string.
-  func replacing(charactersIn characterSet: CharacterSet,
-                 with separator: String) -> String {
+  func replacing(
+    charactersIn characterSet: CharacterSet,
+    with separator: String
+  ) -> String {
     let components = self.components(separatedBy: characterSet)
     return components.joined(separator: separator)
   }
 }
 
 func makeFile() throws {
-  let pkgConfigPath = "/usr/local/lib/pkgconfig"
+  let pkgConfigPath = "./"
   let pkgConfigDir = URL(fileURLWithPath: pkgConfigPath)
 
   // Make /usr/local/lib/pkgconfig if it doesn't already exist
   if !FileManager.default.fileExists(atPath: pkgConfigPath) {
-    try FileManager.default.createDirectory(at: pkgConfigDir,
-                                            withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(
+      at: pkgConfigDir,
+      withIntermediateDirectories: true)
   }
   let cclangPath = pkgConfigDir.appendingPathComponent("cclang.pc")
 
@@ -64,9 +66,8 @@ func makeFile() throws {
   }
 
   /// Ensure we have llvm-config in the PATH
-  guard let llvmConfig = which("llvm-config-4.0") ?? which("llvm-config") ?? brewLLVMConfig() else {
-    throw "Failed to find llvm-config. Ensure llvm-config is installed and " +
-          "in your PATH"
+  guard let llvmConfig = which("llvm-config-20") ?? which("llvm-config") ?? brewLLVMConfig() else {
+    throw "Failed to find llvm-config. Ensure llvm-config is installed and " + "in your PATH"
   }
 
   /// Extract the info we need from llvm-config
@@ -74,10 +75,10 @@ func makeFile() throws {
   print("Found llvm-config at \(llvmConfig)...")
 
   let versionStr = run(llvmConfig, args: ["--version"])!
-                     .replacing(charactersIn: .newlines, with: "")
-                     .replacingOccurrences(of: "svn", with: "")
+    .replacing(charactersIn: .newlines, with: "")
+    .replacingOccurrences(of: "svn", with: "")
   let components = versionStr.components(separatedBy: ".")
-                             .flatMap { Int($0) }
+    .compactMap { Int($0) }
 
   guard components.count == 3 else {
     throw "Invalid version number \(versionStr)"
@@ -125,7 +126,7 @@ func makeFile() throws {
     "Version: \(versionStr)",
     "Libs: \(libFlags)",
     "Requires.private:",
-    "Cflags: \(cFlags)", 
+    "Cflags: \(cFlags)",
   ].joined(separator: "\n")
 
   print("Writing pkg-config file to \(cclangPath.path)...")
@@ -139,11 +140,6 @@ func makeFile() throws {
 do {
   try makeFile()
 } catch {
-#if os(Linux)
-  // FIXME: Printing the thrown error that here crashes on Linux.
-  print("Unexpected error occured while writing the config file. Check permissions and try again.")
-#else
   print("error: \(error)")
-#endif
   exit(-1)
 }

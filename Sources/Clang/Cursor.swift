@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// A cursor representing some element in the abstract syntax tree for a
 /// translation unit.
@@ -12,7 +10,7 @@
 /// source file where the cursor points, getting the name associated with a
 /// cursor, and retrieving cursors for any child nodes of a particular cursor.
 /// Cursors can be produced in two specific ways.
-/// 
+///
 /// `TranslationUnit.cursor`
 /// produces a cursor for a translation unit, from which one can use
 /// `children() to explore the rest of the translation unit.
@@ -51,6 +49,7 @@ extension ClangCursorBacked {
   }
 }
 
+extension CXCursor: @retroactive CustomStringConvertible {}
 extension CXCursor: Cursor {
   /// Returns `self` unmodified.
   public func asClang() -> CXCursor {
@@ -59,7 +58,7 @@ extension CXCursor: Cursor {
 }
 
 /// Compares two `Cursor`s and determines if they are equivalent.
-public func ==(lhs: Cursor, rhs: Cursor) -> Bool {
+public func == (lhs: Cursor, rhs: Cursor) -> Bool {
   return clang_equalCursors(lhs.asClang(), rhs.asClang()) != 0
 }
 
@@ -238,20 +237,21 @@ extension Cursor {
   /// in question is deprecated or marked unavailable, and on which platforms
   /// and versions this availability declaration applies.
   public var availability: Availability {
-    let maxNumPlatforms = 10 // 10 ought to be enough for anybody...
+    let maxNumPlatforms = 10  // 10 ought to be enough for anybody...
     let platformAvailabilities =
       UnsafeMutablePointer<CXPlatformAvailability>.allocate(capacity: maxNumPlatforms)
     var alwaysDeprecated: Int32 = 0
     var deprecatedMessage = CXString()
     var alwaysUnavailable: Int32 = 0
     var unavailableMessage = CXString()
-    let numPlatforms = clang_getCursorPlatformAvailability(asClang(),
-                                                           &alwaysDeprecated,
-                                                           &deprecatedMessage,
-                                                           &alwaysUnavailable,
-                                                           &unavailableMessage,
-                                                           platformAvailabilities,
-                                                           Int32(maxNumPlatforms))
+    let numPlatforms = clang_getCursorPlatformAvailability(
+      asClang(),
+      &alwaysDeprecated,
+      &deprecatedMessage,
+      &alwaysUnavailable,
+      &unavailableMessage,
+      platformAvailabilities,
+      Int32(maxNumPlatforms))
 
     var platforms = [PlatformAvailability]()
     for i in 0..<Int(numPlatforms) {
@@ -260,11 +260,12 @@ extension Cursor {
       clang_disposeCXPlatformAvailability(&platform)
     }
 
-    return Availability(alwaysDeprecated: alwaysDeprecated != 0,
-                        deprecationMessage: deprecatedMessage.asSwiftOptional(),
-                        alwaysUnavailable: alwaysUnavailable != 0,
-                        unavailableMessage: unavailableMessage.asSwiftOptional(),
-                        platforms: platforms)
+    return Availability(
+      alwaysDeprecated: alwaysDeprecated != 0,
+      deprecationMessage: deprecatedMessage.asSwiftOptional(),
+      alwaysUnavailable: alwaysUnavailable != 0,
+      unavailableMessage: unavailableMessage.asSwiftOptional(),
+      platforms: platforms)
   }
 
   /// Returns the storage class for a function or variable declaration.

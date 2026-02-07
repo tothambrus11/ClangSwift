@@ -1,14 +1,11 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
-
 import Foundation
+import cclang
 
 /// Flags that control the creation of translation units.
 /// The enumerators in this enumeration type are meant to be bitwise ORed
 /// together to specify which options should be used when constructing the
 /// translation unit.
-public struct TranslationUnitOptions: OptionSet {
+public struct TranslationUnitOptions: OptionSet, Sendable {
   public typealias RawValue = CXTranslationUnit_Flags.RawValue
   public let rawValue: RawValue
 
@@ -18,8 +15,9 @@ public struct TranslationUnitOptions: OptionSet {
   }
 
   /// Used to indicate that no special translation-unit options are needed.
-  public static let none = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_None.rawValue)
+  public static let none = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_None.rawValue)
 
   /// Used to indicate that the parser should construct a "detailed"
   /// preprocessing record, including all macro definitions and instantiations.
@@ -27,8 +25,9 @@ public struct TranslationUnitOptions: OptionSet {
   /// to parse, since the information contained in the record is usually not
   /// retained. However, it can be useful for applications that require more
   /// detailed information about the behavior of the preprocessor.
-  public static let detailedPreprocessingRecord = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_DetailedPreprocessingRecord.rawValue)
+  public static let detailedPreprocessingRecord = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_DetailedPreprocessingRecord.rawValue)
 
   /// Used to indicate that the translation unit is incomplete.
   /// When a translation unit is considered "incomplete", semantic analysis that
@@ -37,8 +36,9 @@ public struct TranslationUnitOptions: OptionSet {
   /// declarations in C and of instantiation of implicitly-instantiation
   /// function templates in C++. This option is typically used when parsing a
   /// header with the intent of producing a precompiled header.
-  public static let incomplete = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_Incomplete.rawValue)
+  public static let incomplete = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_Incomplete.rawValue)
 
   /// Used to indicate that the translation unit should be built with an
   /// implicit precompiled header for the preamble.
@@ -52,48 +52,55 @@ public struct TranslationUnitOptions: OptionSet {
   /// `clang_reparseTranslationUnit()`
   /// will re-use the implicit
   /// precompiled header to improve parsing performance.
-  public static let precompiledPreamble = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_PrecompiledPreamble.rawValue)
+  public static let precompiledPreamble = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_PrecompiledPreamble.rawValue)
 
   /// Used to indicate that the translation unit should cache some
   /// code-completion results with each reparse of the source file.
   /// Caching of code-completion results is a performance optimization that
   /// introduces some overhead to reparsing but improves the performance of
   /// code-completion operations.
-  public static let cacheCompletionResults = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_CacheCompletionResults.rawValue)
+  public static let cacheCompletionResults = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_CacheCompletionResults.rawValue)
 
   /// This option is typically used when parsing a header with the intent of
   /// producing a precompiled header.
   /// Used to indicate that the translation unit will be serialized with
   /// `clang_saveTranslationUnit.`
-  public static let forSerialization = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_ForSerialization.rawValue)
+  public static let forSerialization = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_ForSerialization.rawValue)
 
   /// DEPRECATED: Enabled chained precompiled preambles in C++.
   /// Note: this is a *temporary* option that is available only while we are
   /// testing C++ precompiled preamble support. It is deprecated.
-  public static let cxxChainedPCH = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_CXXChainedPCH.rawValue)
+  public static let cxxChainedPCH = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_CXXChainedPCH.rawValue)
 
   /// Used to indicate that function/method bodies should be skipped while
   /// parsing.
   /// This option can be used to search for declarations/definitions while
   /// ignoring the usages.
-  public static let skipFunctionBodies = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_SkipFunctionBodies.rawValue)
+  public static let skipFunctionBodies = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_SkipFunctionBodies.rawValue)
 
   /// Used to indicate that brief documentation comments should be included into
   /// the set of code completions returned from this translation unit.
-  public static let includeBriefCommentsInCodeCompletion = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_IncludeBriefCommentsInCodeCompletion.rawValue)
+  public static let includeBriefCommentsInCodeCompletion = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_IncludeBriefCommentsInCodeCompletion.rawValue)
 
   /// Used to indicate that the precompiled preamble should be created on the
   /// first parse. Otherwise it will be created on the first reparse. This
   /// trades runtime on the first parse (serializing the preamble takes time)
   /// for reduced runtime on the second parse (can now reuse the preamble).
-  public static let createPreambleOnFirstParse = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_CreatePreambleOnFirstParse.rawValue)
+  public static let createPreambleOnFirstParse = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_CreatePreambleOnFirstParse.rawValue)
 
   /// Do not stop processing when fatal errors are encountered.
   /// When fatal errors are encountered while parsing a translation unit,
@@ -101,16 +108,16 @@ public struct TranslationUnitOptions: OptionSet {
   /// source for fatal errors are unresolvable include files. For the purposes
   /// of an IDE, this is undesirable behavior and as much information as
   /// possible should be reported. Use this flag to enable this behavior.
-  public static let keepGoing = TranslationUnitOptions(rawValue:
-    CXTranslationUnit_KeepGoing.rawValue)
+  public static let keepGoing = TranslationUnitOptions(
+    rawValue:
+      CXTranslationUnit_KeepGoing.rawValue)
 }
-
 
 /// Flags that control how translation units are saved.
 /// The enumerators in this enumeration type are meant to be bitwise ORed
 /// together to specify which options should be used when saving the translation
 /// unit.
-public struct TranslationUnitSaveOptions: OptionSet {
+public struct TranslationUnitSaveOptions: OptionSet, Sendable {
   public typealias RawValue = CXSaveTranslationUnit_Flags.RawValue
   public let rawValue: RawValue
 
@@ -124,6 +131,13 @@ public struct TranslationUnitSaveOptions: OptionSet {
     TranslationUnitSaveOptions(rawValue: CXSaveTranslationUnit_None.rawValue)
 }
 
+public struct GenericError: Error, Sendable {
+  var message: String
+  public init(_ message: String) {
+    self.message = message
+  }
+}
+
 public class TranslationUnit {
   let clang: CXTranslationUnit
   private let owned: Bool
@@ -132,7 +146,6 @@ public class TranslationUnit {
     self.clang = clang
     self.owned = owned
   }
-
 
   /// Creates a `TranslationUnit` by parsing the file at the specified path,
   /// passing optional command line arguments and options to clang.
@@ -145,20 +158,23 @@ public class TranslationUnit {
   ///   - options: Options for how to handle the parsed file
   /// - throws: `ClangError` if the translation unit could not be created
   ///           successfully.
-  public init(filename: String,
-              index: Index = Index(),
-              commandLineArgs args: [String] = [],
-              options: TranslationUnitOptions = [],
-              unsavedFiles: [UnsavedFile] = []) throws {
+  public init(
+    filename: String,
+    index: Index = Index(),
+    commandLineArgs args: [String] = [],
+    options: TranslationUnitOptions = [],
+    unsavedFiles: [UnsavedFile] = []
+  ) throws {
     self.clang = try args.withUnsafeCStringBuffer { argC in
       var unit: CXTranslationUnit?
       var cxUnsavedFiles = unsavedFiles.map { $0.clang }
-      let err = clang_parseTranslationUnit2(index.clang, filename,
-                                            argC.baseAddress,
-                                            Int32(argC.count),
-                                            &cxUnsavedFiles,
-                                            UInt32(cxUnsavedFiles.count),
-                                            options.rawValue, &unit)
+      let err = clang_parseTranslationUnit2(
+        index.clang, filename,
+        argC.baseAddress,
+        Int32(argC.count),
+        &cxUnsavedFiles,
+        UInt32(cxUnsavedFiles.count),
+        options.rawValue, &unit)
       if let clangErr = ClangError(clang: err) {
         throw clangErr
       }
@@ -178,11 +194,13 @@ public class TranslationUnit {
   ///   - options: Options for how to handle the parsed file
   /// - throws: `ClangError` if the translation unit could not be created
   ///           successfully.
-  public convenience init(clangSource: String,
-                          language: Language,
-                          index: Index = Index(),
-                          commandLineArgs args: [String] = [],
-                          options: TranslationUnitOptions = []) throws {
+  public convenience init(
+    clangSource: String,
+    language: Language,
+    index: Index = Index(),
+    commandLineArgs args: [String] = [],
+    options: TranslationUnitOptions = []
+  ) throws {
     // Returns URL for temporary directory.
     let temporaryDirectory = { () -> URL in
       if #available(OSX 10.12, *) {
@@ -209,16 +227,22 @@ public class TranslationUnit {
       UUID().uuidString.lowercased() + extensionFromLang(language)
     let temporaryClangFileURL =
       temporaryDirectory().appendingPathComponent(randomFileName)
-    FileManager.default.createFile(atPath: temporaryClangFileURL.path,
-                                   contents: clangSource.data(using: .utf8))
+    guard
+      FileManager.default.createFile(
+        atPath: temporaryClangFileURL.path,
+        contents: clangSource.data(using: .utf8))
+    else {
+      throw GenericError("Unable to create temporary file for clang source")
+    }
     defer {
       try? FileManager.default.removeItem(at: temporaryClangFileURL)
     }
 
-    try self.init(filename: temporaryClangFileURL.path,
-                  index: index,
-                  commandLineArgs: args,
-                  options: options)
+    try self.init(
+      filename: temporaryClangFileURL.path,
+      index: index,
+      commandLineArgs: args,
+      options: options)
   }
 
   /// Creates a `TranslationUnit` from an AST file generated by `-emit-ast`.
@@ -231,13 +255,14 @@ public class TranslationUnit {
   ///           successfully.
   public init(astFilename: String, index: Index = Index()) throws {
     var unit: CXTranslationUnit?
-    let err = clang_createTranslationUnit2(index.clang,
-                                           astFilename,
-                                           &unit)
+    let err = clang_createTranslationUnit2(
+      index.clang,
+      astFilename,
+      &unit)
     if let clangErr = ClangError(clang: err) {
       throw clangErr
     }
-    
+
     self.clang = unit!
     self.owned = true
   }
@@ -256,8 +281,9 @@ public class TranslationUnit {
 
     let count = clang_getNumDiagnosticsInSet(diagnosticSet)
     return (0..<count).map { idx in
-      Diagnostic(clang:
-        clang_getDiagnosticInSet(diagnosticSet, idx))
+      Diagnostic(
+        clang:
+          clang_getDiagnosticInSet(diagnosticSet, idx))
     }
   }
 
@@ -271,7 +297,7 @@ public class TranslationUnit {
   public func visitChildren(_ perCursorCallback: (Cursor) -> ChildVisitResult) {
     cursor.visitChildren(perCursorCallback)
   }
-  
+
   /// Visitor invoked for each file in a translation unit (used with
   /// `visitInclusion(_:)`).
   ///
@@ -281,8 +307,10 @@ public class TranslationUnit {
   /// the second argument provide the inclusion stack.  The array is sorted in
   /// order of immediate inclusion.  For example, the first element refers to
   /// the location that included `includedFile`.
-  public typealias InclusionVisitor = (_ includedFile: File, _ inclusionStack: AnyRandomAccessCollection<SourceLocation>) -> Void
-  
+  public typealias InclusionVisitor = (
+    _ includedFile: File, _ inclusionStack: AnyRandomAccessCollection<SourceLocation>
+  ) -> Void
+
   /// Visit the set of preprocessor inclusions in a translation unit.
   /// The visitor function is called with the provided data for every included
   /// file.  This does not include headers included by the PCH file (unless one
@@ -337,7 +365,6 @@ public class TranslationUnit {
     return tokens
   }
 
-
   /// Annotate the given set of tokens by providing cursors for each token
   /// that can be mapped to a specific entity within the abstract syntax tree.
   /// This token-annotation routine is equivalent to invoking `cursor(at:)`
@@ -366,16 +393,18 @@ public class TranslationUnit {
     let cursors =
       UnsafeMutablePointer<CXCursor>.allocate(capacity: toks.count)
     toks.withUnsafeMutableBufferPointer { buf in
-      clang_annotateTokens(clang, buf.baseAddress,
-                           UInt32(buf.count), cursors)
+      clang_annotateTokens(
+        clang, buf.baseAddress,
+        UInt32(buf.count), cursors)
     }
     return (0..<toks.count).compactMap { convertCursor(cursors[$0]) }
   }
 
   /// Returns the set of flags that is suitable for reparsing a translation unit.
   public var defaultReparseOptions: TranslationUnitOptions {
-    return TranslationUnitOptions(rawValue:
-      clang_defaultReparseOptions(self.clang))
+    return TranslationUnitOptions(
+      rawValue:
+        clang_defaultReparseOptions(self.clang))
   }
 
   /// Reparse the source files that produced this translation unit.
@@ -404,14 +433,18 @@ public class TranslationUnit {
   ///
   /// - throws: `ClangError` if the translation unit could not be created
   ///           successfully.
-  public func reparseTransaltionUnit(using unsavedFiles: [UnsavedFile],
-                        options: TranslationUnitOptions) throws {
+  public func reparseTransaltionUnit(
+    using unsavedFiles: [UnsavedFile],
+    options: TranslationUnitOptions
+  ) throws {
     var cxUnsavedFiles = unsavedFiles.map { $0.clang }
     let err = CXErrorCode(
-      UInt32(clang_reparseTranslationUnit(self.clang,
-                                          UInt32(unsavedFiles.count),
-                                          &cxUnsavedFiles,
-                                          options.rawValue)))
+      UInt32(
+        clang_reparseTranslationUnit(
+          self.clang,
+          UInt32(unsavedFiles.count),
+          &cxUnsavedFiles,
+          options.rawValue)))
     if let clangErr = ClangError(clang: err) {
       throw clangErr
     }
@@ -441,8 +474,10 @@ public class TranslationUnit {
   ///   - withOptions: Options that affects how the translation unit is saved.
   ///
   /// - throws: `ClangSaveError` in case an error occurred.
-  public func saveTranslationUnit(in filename: String,
-                                  withOptions options: TranslationUnitSaveOptions) throws {
+  public func saveTranslationUnit(
+    in filename: String,
+    withOptions options: TranslationUnitSaveOptions
+  ) throws {
     let err = CXSaveError(
       UInt32(clang_saveTranslationUnit(self.clang, filename, options.rawValue)))
     if let clangSaveErr = ClangSaveError(clang: err) {
@@ -457,17 +492,21 @@ public class TranslationUnit {
   /// - Preprocessor callbacks invocations
   /// - Declaration/reference callbacks invocations
   /// - Diagnostic callback invocations
-  public func indexTranslationUnit(indexAction: IndexAction,
-                                   indexerCallbacks: IndexerCallbacks,
-                                   options: IndexOptFlags) throws {
+  public func indexTranslationUnit(
+    indexAction: IndexAction,
+    indexerCallbacks: IndexerCallbacks,
+    options: IndexOptFlags
+  ) throws {
     let opaque = Unmanaged.passUnretained(indexerCallbacks).toOpaque()
-    let err = CXErrorCode(UInt32(
-      clang_indexTranslationUnit(indexAction.clang,
-                                 opaque, // Used as data in order capture its callbacks
-                                 &indexerCallbacks.clang,
-                                 UInt32(MemoryLayout<cclang.IndexerCallbacks>.size),
-                                 options.rawValue,
-                                 self.clang)))
+    let err = CXErrorCode(
+      UInt32(
+        clang_indexTranslationUnit(
+          indexAction.clang,
+          opaque,  // Used as data in order capture its callbacks
+          &indexerCallbacks.clang,
+          UInt32(MemoryLayout<cclang.IndexerCallbacks>.size),
+          options.rawValue,
+          self.clang)))
 
     if let clangErr = ClangError(clang: err) {
       throw clangErr

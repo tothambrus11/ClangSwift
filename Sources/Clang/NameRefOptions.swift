@@ -1,8 +1,6 @@
-#if SWIFT_PACKAGE
 import cclang
-#endif
 
-public struct NameRefOptions: OptionSet {
+public struct NameRefOptions: OptionSet, Sendable {
   public typealias RawValue = CXNameRefFlags.RawValue
   public let rawValue: RawValue
 

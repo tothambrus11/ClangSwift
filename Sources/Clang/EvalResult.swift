@@ -1,6 +1,4 @@
-#if SWIFT_PACKAGE
-  import cclang
-#endif
+import cclang
 
 /// Represents the result of evaluating a CXCursor
 public enum EvalResult {
