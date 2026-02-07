@@ -11,7 +11,7 @@ func run(_ path: String, args: [String] = []) throws -> String {
   print("Running \(path) \(args.joined(separator: " "))...")
   let pipe = Pipe()
   let process = Process()
-  process.launchPath = path
+  process.executableURL = URL(fileURLWithPath: path)
   process.arguments = args
   process.standardOutput = pipe
   try process.run()
@@ -32,10 +32,10 @@ func run(_ path: String, args: [String] = []) throws -> String {
 
 /// Finds the location of the provided binary on your system.
 func which(_ name: String) throws -> String {
-  return run("/usr/bin/which", args: [name])
+  return try run("/usr/bin/which", args: [name])
 }
 
-extension String: Error {
+extension String: @retroactive Error {
   /// Replaces all occurrences of characters in the provided set with
   /// the provided string.
   func replacing(
@@ -59,14 +59,14 @@ func makeFile() throws {
   }
   let cclangPath = pkgConfigDir.appendingPathComponent("cclang.pc")
 
-  let brewLLVMConfig: () -> String? = {
-    guard let brew = which("brew") else { return nil }
-    guard let brewPrefix = run(brew, args: ["--prefix"]) else { return nil }
-    return which(brewPrefix + "/opt/llvm/bin/llvm-config")
+  let brewLLVMConfig: () throws -> String = {
+    let brew = try which("brew")
+    let brewPrefix = try run(brew, args: ["--prefix"])
+    return try which(brewPrefix + "/opt/llvm/bin/llvm-config")
   }
 
   /// Ensure we have llvm-config in the PATH
-  guard let llvmConfig = which("llvm-config-20") ?? which("llvm-config") ?? brewLLVMConfig() else {
+  guard let llvmConfig = (try? which("llvm-config-20")) ?? (try? which("llvm-config")) ?? (try? brewLLVMConfig()) else {
     throw "Failed to find llvm-config. Ensure llvm-config is installed and " + "in your PATH"
   }
 
@@ -74,7 +74,7 @@ func makeFile() throws {
 
   print("Found llvm-config at \(llvmConfig)...")
 
-  let versionStr = run(llvmConfig, args: ["--version"])!
+  let versionStr = try run(llvmConfig, args: ["--version"])
     .replacing(charactersIn: .newlines, with: "")
     .replacingOccurrences(of: "svn", with: "")
   let components = versionStr.components(separatedBy: ".")
@@ -92,15 +92,13 @@ func makeFile() throws {
 
   print("LLVM version is \(versionStr)")
 
-  let cFlags = run(llvmConfig, args: ["--cflags"])!
+  let cFlags = try run(llvmConfig, args: ["--cflags"])
     .replacing(charactersIn: .newlines, with: "")
     .components(separatedBy: " ")
     .filter { $0.hasPrefix("-I") }
     .joined(separator: " ")
 
-  guard let libDir = run(llvmConfig, args: ["--libdir"]) else {
-    throw "Could not find LLVM library dir"
-  }
+  let libDir = try run(llvmConfig, args: ["--libdir"])
 
   /// Emit the pkg-config file to the path
 
