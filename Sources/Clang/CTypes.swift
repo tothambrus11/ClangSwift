@@ -27,15 +27,17 @@ public struct RecordType: ClangTypeBacked {
     let fields = Box([Cursor]())
     let fieldsRef = Unmanaged.passUnretained(fields)
     let opaque = fieldsRef.toOpaque()
-    clang_Type_visitFields(asClang(), { (child, opaque) -> CXVisitorResult in
-      guard let opaque else { return CXVisit_Break }
-      let fieldsRef = Unmanaged<Box<[Cursor]>>.fromOpaque(opaque)
-      let fields = fieldsRef.takeUnretainedValue()
-      if let cursor = convertCursor(child) {
-        fields.value.append(cursor)
-      }
-      return CXVisit_Continue
-    }, opaque)
+    clang_Type_visitFields(
+      asClang(),
+      { (child, opaque) -> CXVisitorResult in
+        guard let opaque else { return CXVisit_Break }
+        let fieldsRef = Unmanaged<Box<[Cursor]>>.fromOpaque(opaque)
+        let fields = fieldsRef.takeUnretainedValue()
+        if let cursor = convertCursor(child) {
+          fields.value.append(cursor)
+        }
+        return CXVisit_Continue
+      }, opaque)
     return fields.value
   }
 }
@@ -330,6 +332,11 @@ public struct HLSLAttributedResourceType: ClangTypeBacked {
   let clang: CXType
 }
 
+/// HLSL Types
+public struct HLSLInlineSpirvType: ClangTypeBacked {
+  let clang: CXType
+}
+
 public struct AutoType: ClangTypeBacked {
   let clang: CXType
 }
@@ -428,9 +435,15 @@ public struct OCLIntelSubgroupAVCMceResultType: ClangTypeBacked { let clang: CXT
 public struct OCLIntelSubgroupAVCImeResultType: ClangTypeBacked { let clang: CXType }
 public struct OCLIntelSubgroupAVCRefResultType: ClangTypeBacked { let clang: CXType }
 public struct OCLIntelSubgroupAVCSicResultType: ClangTypeBacked { let clang: CXType }
-public struct OCLIntelSubgroupAVCImeResultSingleReferenceStreamoutType: ClangTypeBacked { let clang: CXType }
-public struct OCLIntelSubgroupAVCImeResultDualReferenceStreamoutType: ClangTypeBacked { let clang: CXType }
-public struct OCLIntelSubgroupAVCImeSingleReferenceStreaminType: ClangTypeBacked { let clang: CXType }
+public struct OCLIntelSubgroupAVCImeResultSingleReferenceStreamoutType: ClangTypeBacked {
+  let clang: CXType
+}
+public struct OCLIntelSubgroupAVCImeResultDualReferenceStreamoutType: ClangTypeBacked {
+  let clang: CXType
+}
+public struct OCLIntelSubgroupAVCImeSingleReferenceStreaminType: ClangTypeBacked {
+  let clang: CXType
+}
 public struct OCLIntelSubgroupAVCImeDualReferenceStreaminType: ClangTypeBacked { let clang: CXType }
 
 /// Converts a CXType to a CType, returning `nil` if it was unsuccessful
@@ -505,6 +518,7 @@ func convertType(_ clang: CXType) -> CType? {
   case CXType_BTFTagAttributed: return BTFTagAttributedType(clang: clang)
   case CXType_HLSLResource: return HLSLResourceType(clang: clang)
   case CXType_HLSLAttributedResource: return HLSLAttributedResourceType(clang: clang)
+  case CXType_HLSLInlineSpirv: return HLSLInlineSpirvType(clang: clang)
   case CXType_Auto: return AutoType(clang: clang)
   case CXType_Elaborated: return ElaboratedType(clang: clang)
   case CXType_OCLImage1dRO: return OCLImage1dROType(clang: clang)
@@ -555,14 +569,22 @@ func convertType(_ clang: CXType) -> CType? {
   case CXType_OCLIntelSubgroupAVCImeResult: return OCLIntelSubgroupAVCImeResultType(clang: clang)
   case CXType_OCLIntelSubgroupAVCRefResult: return OCLIntelSubgroupAVCRefResultType(clang: clang)
   case CXType_OCLIntelSubgroupAVCSicResult: return OCLIntelSubgroupAVCSicResultType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeResultSingleReferenceStreamout: return OCLIntelSubgroupAVCImeResultSingleReferenceStreamoutType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeResultDualReferenceStreamout: return OCLIntelSubgroupAVCImeResultDualReferenceStreamoutType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeSingleReferenceStreamin: return OCLIntelSubgroupAVCImeSingleReferenceStreaminType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeDualReferenceStreamin: return OCLIntelSubgroupAVCImeDualReferenceStreaminType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeResultSingleRefStreamout: return OCLIntelSubgroupAVCImeResultSingleReferenceStreamoutType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeResultDualRefStreamout: return OCLIntelSubgroupAVCImeResultDualReferenceStreamoutType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeSingleRefStreamin: return OCLIntelSubgroupAVCImeSingleReferenceStreaminType(clang: clang)
-  case CXType_OCLIntelSubgroupAVCImeDualRefStreamin: return OCLIntelSubgroupAVCImeDualReferenceStreaminType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeResultSingleReferenceStreamout:
+    return OCLIntelSubgroupAVCImeResultSingleReferenceStreamoutType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeResultDualReferenceStreamout:
+    return OCLIntelSubgroupAVCImeResultDualReferenceStreamoutType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeSingleReferenceStreamin:
+    return OCLIntelSubgroupAVCImeSingleReferenceStreaminType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeDualReferenceStreamin:
+    return OCLIntelSubgroupAVCImeDualReferenceStreaminType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeResultSingleRefStreamout:
+    return OCLIntelSubgroupAVCImeResultSingleReferenceStreamoutType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeResultDualRefStreamout:
+    return OCLIntelSubgroupAVCImeResultDualReferenceStreamoutType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeSingleRefStreamin:
+    return OCLIntelSubgroupAVCImeSingleReferenceStreaminType(clang: clang)
+  case CXType_OCLIntelSubgroupAVCImeDualRefStreamin:
+    return OCLIntelSubgroupAVCImeDualReferenceStreaminType(clang: clang)
   case CXType_LastBuiltin: return UnexposedType(clang: clang)
   default: fatalError("invalid CXTypeKind \(clang)")
   }

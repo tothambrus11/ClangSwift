@@ -1,6 +1,6 @@
-# Methodology: Clang/LLVM 20 upgrade audit for this Swift libclang wrapper
+# Methodology: Clang/LLVM 21 upgrade audit for this Swift libclang wrapper
 
-This methodology aims to make the Clang 4 → Clang 20 upgrade **correct**, **thorough**, and **repeatable**, with an explicit focus on:
+This methodology aims to make the Clang 4 → Clang 21 upgrade **correct**, **thorough**, and **repeatable**, with an explicit focus on:
 
 - API surface changes in the *public* `clang-c` headers (enums, flags, functions)
 - Wrapper coverage (Swift types and helpers) vs raw imported C API
@@ -11,7 +11,7 @@ This methodology aims to make the Clang 4 → Clang 20 upgrade **correct**, **th
 1. Treat the shim header as the authoritative list of public C headers you import.
    - File: `Sources/cclang/shim.h`
    - It should `#include <clang-c/...>` for every public header you expect to be available to Swift.
-2. For Clang 20, note that some APIs were split out into separate headers (e.g. diagnostics, file/location).
+2. For Clang 21, note that some APIs were split out into separate headers (e.g. diagnostics, file/location).
 
 **Correctness criterion:** every C declaration used in Swift must be reachable via the shim module.
 
@@ -40,7 +40,7 @@ Perform two checks:
    - mapped to a Swift case/type, or
    - explicitly handled as “unknown/unexposed”.
 
-**Correctness criterion:** the wrapper intentionally exposes (or intentionally omits, with documentation) the Clang 20 members you care about.
+**Correctness criterion:** the wrapper intentionally exposes (or intentionally omits, with documentation) the Clang 21 members you care about.
 
 ## 4) Tokens: validate kind coverage and token API exposure
 
@@ -73,7 +73,7 @@ Note: the audit intentionally does **not** treat `fatalError(...)` as a problem.
 
 Run it during upgrades and commit the generated report:
 
-- `docs/clang20-api-audit-report.md`
+- `docs/clang21-api-audit-report.md`
 
 **Correctness criterion:** upgrade PRs include a “gap report” and either close gaps or explicitly document why not.
 
@@ -81,7 +81,7 @@ Run it during upgrades and commit the generated report:
 
 Recommended policy for future-proofing:
 
-- For cursor/type/token conversion factories: decide which new Clang 20 members you want to support, then add mappings for those members.
+- For cursor/type/token conversion factories: decide which new Clang 21 members you want to support, then add mappings for those members.
 - For Swift enums mapping C enums: add an `.unknown(rawValue:)` or return `nil` when appropriate.
 - For OptionSets: expose new flags as additional static lets when they matter for users.
 

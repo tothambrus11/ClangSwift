@@ -737,6 +737,7 @@ public enum BinaryOperatorKind: Sendable {
     case CXBinaryOperator_XorAssign: self = .xorAssign
     case CXBinaryOperator_OrAssign: self = .orAssign
     case CXBinaryOperator_Comma: self = .comma
+    case CXBinaryOperator_Last: self = .comma  // Sentinel value, maps to last valid case
     default: fatalError("invalid CXBinaryOperatorKind \(clang)")
     }
   }
@@ -1747,6 +1748,11 @@ public struct OMPAssumeDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
+///  OpenMP stripe directive.
+public struct OMPStripeDirective: ClangCursorBacked {
+  let clang: CXCursor
+}
+
 ///  OpenACC Compute Construct.
 public struct OpenACCComputeConstruct: ClangCursorBacked {
   let clang: CXCursor
@@ -1804,6 +1810,16 @@ public struct OpenACCSetConstruct: ClangCursorBacked {
 
 ///  OpenACC update Construct.
 public struct OpenACCUpdateConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+///  OpenACC atomic Construct.
+public struct OpenACCAtomicConstruct: ClangCursorBacked {
+  let clang: CXCursor
+}
+
+///  OpenACC cache Construct.
+public struct OpenACCCacheConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
@@ -2014,7 +2030,6 @@ public struct StaticAssert: ClangCursorBacked {
 public struct OverloadCandidate: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 /// Converts a CXCursor to a Cursor, returning `nil` if it was unsuccessful
 func convertCursor(_ clang: CXCursor) -> Cursor? {
@@ -2278,6 +2293,7 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_OMPReverseDirective: return OMPReverseDirective(clang: clang)
   case CXCursor_OMPInterchangeDirective: return OMPInterchangeDirective(clang: clang)
   case CXCursor_OMPAssumeDirective: return OMPAssumeDirective(clang: clang)
+  case CXCursor_OMPStripeDirective: return OMPStripeDirective(clang: clang)
   case CXCursor_OpenACCComputeConstruct: return OpenACCComputeConstruct(clang: clang)
   case CXCursor_OpenACCLoopConstruct: return OpenACCLoopConstruct(clang: clang)
   case CXCursor_OpenACCCombinedConstruct: return OpenACCCombinedConstruct(clang: clang)
@@ -2290,6 +2306,8 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_OpenACCShutdownConstruct: return OpenACCShutdownConstruct(clang: clang)
   case CXCursor_OpenACCSetConstruct: return OpenACCSetConstruct(clang: clang)
   case CXCursor_OpenACCUpdateConstruct: return OpenACCUpdateConstruct(clang: clang)
+  case CXCursor_OpenACCAtomicConstruct: return OpenACCAtomicConstruct(clang: clang)
+  case CXCursor_OpenACCCacheConstruct: return OpenACCCacheConstruct(clang: clang)
   case CXCursor_TranslationUnit: return TranslationUnitCursor(clang: clang)
   case CXCursor_UnexposedAttr: return UnexposedAttr(clang: clang)
   case CXCursor_IBActionAttr: return IBActionAttr(clang: clang)

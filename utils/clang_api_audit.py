@@ -14,10 +14,10 @@ It should be used as a checklist generator, not a proof of full correctness.
 
 Usage:
   python3 utils/clang_api_audit.py \
-    --llvm-include /usr/lib/llvm-20/include \
+    --llvm-include /usr/lib/llvm-21/include \
     --shim Sources/cclang/shim.h \
     --swift Sources/Clang \
-    --out docs/clang20-api-audit-report.md
+    --out docs/clang21-api-audit-report.md
 """
 
 from __future__ import annotations
@@ -306,10 +306,10 @@ def format_markdown(
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--llvm-include", default="/usr/lib/llvm-20/include", help="Path containing clang-c/")
+    ap.add_argument("--llvm-include", default="/usr/lib/llvm-21/include", help="Path containing clang-c/")
     ap.add_argument("--shim", default="Sources/cclang/shim.h", help="Path to shim.h")
     ap.add_argument("--swift", default="Sources/Clang", help="Swift wrapper root")
-    ap.add_argument("--out", default="docs/clang20-api-audit-report.md", help="Output markdown path")
+    ap.add_argument("--out", default="docs/clang21-api-audit-report.md", help="Output markdown path")
     args = ap.parse_args()
 
     include_root = Path(args.llvm_include)

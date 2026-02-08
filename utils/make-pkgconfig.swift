@@ -66,7 +66,7 @@ func makeFile() throws {
   }
 
   /// Ensure we have llvm-config in the PATH
-  guard let llvmConfig = (try? which("llvm-config-20")) ?? (try? which("llvm-config")) ?? (try? brewLLVMConfig()) else {
+  guard let llvmConfig = (try? which("llvm-config-21")) ?? (try? which("llvm-config")) ?? (try? brewLLVMConfig()) else {
     throw "Failed to find llvm-config. Ensure llvm-config is installed and " + "in your PATH"
   }
 

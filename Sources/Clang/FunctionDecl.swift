@@ -25,6 +25,18 @@ public enum CallingConvention {
   case m68kRTD
   case preserveNone
   case riscvVectorCall
+  case riscvVLSCall_32
+  case riscvVLSCall_64
+  case riscvVLSCall_128
+  case riscvVLSCall_256
+  case riscvVLSCall_512
+  case riscvVLSCall_1024
+  case riscvVLSCall_2048
+  case riscvVLSCall_4096
+  case riscvVLSCall_8192
+  case riscvVLSCall_16384
+  case riscvVLSCall_32768
+  case riscvVLSCall_65536
   case unexposed
 
   init?(clang: CXCallingConv) {
@@ -52,6 +64,18 @@ public enum CallingConvention {
     case CXCallingConv_M68kRTD: self = .m68kRTD
     case CXCallingConv_PreserveNone: self = .preserveNone
     case CXCallingConv_RISCVVectorCall: self = .riscvVectorCall
+    case CXCallingConv_RISCVVLSCall_32: self = .riscvVLSCall_32
+    case CXCallingConv_RISCVVLSCall_64: self = .riscvVLSCall_64
+    case CXCallingConv_RISCVVLSCall_128: self = .riscvVLSCall_128
+    case CXCallingConv_RISCVVLSCall_256: self = .riscvVLSCall_256
+    case CXCallingConv_RISCVVLSCall_512: self = .riscvVLSCall_512
+    case CXCallingConv_RISCVVLSCall_1024: self = .riscvVLSCall_1024
+    case CXCallingConv_RISCVVLSCall_2048: self = .riscvVLSCall_2048
+    case CXCallingConv_RISCVVLSCall_4096: self = .riscvVLSCall_4096
+    case CXCallingConv_RISCVVLSCall_8192: self = .riscvVLSCall_8192
+    case CXCallingConv_RISCVVLSCall_16384: self = .riscvVLSCall_16384
+    case CXCallingConv_RISCVVLSCall_32768: self = .riscvVLSCall_32768
+    case CXCallingConv_RISCVVLSCall_65536: self = .riscvVLSCall_65536
     case CXCallingConv_Invalid: return nil
     case CXCallingConv_Unexposed: self = .unexposed
     default: fatalError("invalid CXCallingConv \(clang)")
@@ -70,58 +94,72 @@ public struct ObjCPropertyAttributes: OptionSet, Sendable {
   }
 
   /// The property has no attributes.
-  public static let noattr = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_noattr.rawValue)
+  public static let noattr = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_noattr.rawValue)
 
   /// The property was marked readonly.
-  public static let readonly = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_readonly.rawValue)
+  public static let readonly = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_readonly.rawValue)
 
   /// The property has an explicit name for the `getter`.
-  public static let getter = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_getter.rawValue)
+  public static let getter = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_getter.rawValue)
 
   /// The property has `assign` semantics.
-  public static let assign = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_assign.rawValue)
+  public static let assign = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_assign.rawValue)
 
   /// The property was explicitly marked `readwrite`.
-  public static let readwrite = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_readwrite.rawValue)
+  public static let readwrite = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_readwrite.rawValue)
 
   /// The property has `retain` semantics.
-  public static let retain = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_retain.rawValue)
+  public static let retain = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_retain.rawValue)
 
   /// The property has `copy` semantics.
-  public static let copy = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_copy.rawValue)
+  public static let copy = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_copy.rawValue)
 
   /// The property will be read `nonatomic`ally.
-  public static let nonatomic = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_nonatomic.rawValue)
+  public static let nonatomic = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_nonatomic.rawValue)
 
   /// The property has an explicit name for the `setter`.
-  public static let setter = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_setter.rawValue)
+  public static let setter = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_setter.rawValue)
 
   /// The property will be read `atomic`ally.
-  public static let atomic = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_atomic.rawValue)
+  public static let atomic = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_atomic.rawValue)
 
   /// The property is a `weak` reference.
-  public static let weak = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_weak.rawValue)
+  public static let weak = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_weak.rawValue)
 
   /// The property is a `strong` reference.
-  public static let strong = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_strong.rawValue)
+  public static let strong = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_strong.rawValue)
 
   /// The property is marked `unsafe_unretained`.
-  public static let unsafe_unretained = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_unsafe_unretained.rawValue)
+  public static let unsafe_unretained = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_unsafe_unretained.rawValue)
 
   /// the property is a `class` property.
-  public static let `class` = ObjCPropertyAttributes(rawValue:
-    CXObjCPropertyAttr_class.rawValue)
+  public static let `class` = ObjCPropertyAttributes(
+    rawValue:
+      CXObjCPropertyAttr_class.rawValue)
 }

@@ -1,7 +1,7 @@
 # Clang 20 API vs Swift wrapper audit
 
 - Shim: `Sources/cclang/shim.h`
-- LLVM include: `/usr/lib/llvm-20/include`
+- LLVM include: `/usr/lib/llvm-21/include`
 - clang-c headers included by shim: 12
 - clang-c headers parsed: 12
 
@@ -11,10 +11,10 @@ For each C enum found in the shim-included headers, this checks whether each mem
 
 ### Key enums
 
-- `CXCursorKind`: present 304/304 (missing 0)
-- `CXTypeKind`: present 128/128 (missing 0)
+- `CXCursorKind`: present 307/307 (missing 0)
+- `CXTypeKind`: present 129/129 (missing 0)
 - `CXTokenKind`: present 5/5 (missing 0)
-- `CXCallingConv`: present 25/25 (missing 0)
+- `CXCallingConv`: present 37/37 (missing 0)
 - `CXLanguageKind`: present 4/4 (missing 0)
 - `CXDiagnosticSeverity`: present 5/5 (missing 0)
 - `CXLoadDiag_Error`: present 4/4 (missing 0)
