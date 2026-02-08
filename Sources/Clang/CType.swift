@@ -66,7 +66,7 @@ extension CXType: CType {
 }
 
 /// Determines if two C types are equal to each other.
-public func ==(lhs: CType, rhs: CType) -> Bool {
+public func == (lhs: CType, rhs: CType) -> Bool {
   return clang_equalTypes(lhs.asClang(), rhs.asClang()) != 0
 }
 
@@ -120,6 +120,16 @@ extension CType {
   /// Retrieves the Objective-C type encoding for the receiver.
   public var objcEncoding: String {
     return clang_Type_getObjCEncoding(asClang()).asSwift()
+  }
+
+  /// Get the fully qualified name for a type.
+  ///
+  /// This includes full qualification of all template parameters.
+  ///
+  /// Policy - Further refine the type formatting
+  /// withGlobalNamespacePrefix - whether to prepend a '::' to qualified names
+  public func fullyQualifiedName(using printingPolicy: borrowing PrintingPolicy, withGlobalNamespacePrefix: Bool = true) -> String {
+    return clang_getFullyQualifiedName(asClang(), printingPolicy.asClang(), withGlobalNamespacePrefix ? 1 : 0).asSwift()
   }
 
   /// Return the canonical type for a CType.
@@ -193,4 +203,3 @@ public enum RefQualifier {
     }
   }
 }
-

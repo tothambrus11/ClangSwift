@@ -70,7 +70,8 @@ public enum PrintingPolicyProperty {
     case CXPrintingPolicy_AnonymousTagLocations: self = .anonymousTagLocations
     case CXPrintingPolicy_SuppressStrongLifetime: self = .suppressStrongLifetime
     case CXPrintingPolicy_SuppressLifetimeQualifiers: self = .suppressLifetimeQualifiers
-    case CXPrintingPolicy_SuppressTemplateArgsInCXXConstructors: self = .suppressTemplateArgsInCXXConstructors
+    case CXPrintingPolicy_SuppressTemplateArgsInCXXConstructors:
+      self = .suppressTemplateArgsInCXXConstructors
     case CXPrintingPolicy_Bool: self = .bool
     case CXPrintingPolicy_Restrict: self = .restrict
     case CXPrintingPolicy_Alignof: self = .alignof
@@ -102,7 +103,8 @@ public enum PrintingPolicyProperty {
     case .anonymousTagLocations: return CXPrintingPolicy_AnonymousTagLocations
     case .suppressStrongLifetime: return CXPrintingPolicy_SuppressStrongLifetime
     case .suppressLifetimeQualifiers: return CXPrintingPolicy_SuppressLifetimeQualifiers
-    case .suppressTemplateArgsInCXXConstructors: return CXPrintingPolicy_SuppressTemplateArgsInCXXConstructors
+    case .suppressTemplateArgsInCXXConstructors:
+      return CXPrintingPolicy_SuppressTemplateArgsInCXXConstructors
     case .bool: return CXPrintingPolicy_Bool
     case .restrict: return CXPrintingPolicy_Restrict
     case .alignof: return CXPrintingPolicy_Alignof
@@ -129,18 +131,12 @@ extension PrintingPolicyProperty {
 }
 
 /// A policy that controls pretty printing for `clang_getCursorPrettyPrinted`.
-public final class PrintingPolicy {
+public struct PrintingPolicy: ~Copyable {
   fileprivate let clang: CXPrintingPolicy
 
-  fileprivate init(clang: CXPrintingPolicy) {
-    self.clang = clang
-  }
-
-  /// Initialize a PrintingPolicy from a cursor.
-  ///
-  /// - Parameter cursor: The cursor to get the printing policy from.
-  public convenience init(cursor: Cursor) {
-    self.init(clang: clang_getCursorPrintingPolicy(cursor.asClang()))
+  /// Creates a new PrintingPolicy for the given cursor.
+  public init(of cursor: Cursor) {
+    self.clang = clang_getCursorPrintingPolicy(cursor.asClang())
   }
 
   deinit {
@@ -153,8 +149,13 @@ public final class PrintingPolicy {
   }
 
   /// Set a property value for the given printing policy.
-  public func set(_ property: PrintingPolicyProperty, value: UInt32) {
+  public mutating func set(_ property: PrintingPolicyProperty, value: UInt32) {
     clang_PrintingPolicy_setProperty(clang, property.asClang, value)
+  }
+
+  /// Returns a reference to the underlying CXPrintingPolicy.
+  public func asClang() -> CXPrintingPolicy {
+    return clang
   }
 }
 
@@ -163,26 +164,34 @@ extension Cursor {
   ///
   /// The policy should be released after use with `clang_PrintingPolicy_dispose`.
   public var printingPolicy: PrintingPolicy {
-    return PrintingPolicy(clang: clang_getCursorPrintingPolicy(asClang()))
+    return PrintingPolicy(of: self)
   }
 
   /// Pretty print declarations.
   ///
   /// - Parameters:
-  ///   - policy: The policy to control the entities being printed. If `nil`, a
-  ///     default policy is used.
+  ///   - policy: The policy to control the entities being printed.
   /// - Returns: The pretty printed declaration or the empty string for other
   ///   cursors.
-  public func prettyPrinted(using policy: PrintingPolicy? = nil) -> String {
-    return clang_getCursorPrettyPrinted(asClang(), policy?.clang).asSwift()
+  public func prettyPrinted(using policy: borrowing PrintingPolicy) -> String {
+    return clang_getCursorPrettyPrinted(asClang(), policy.asClang()).asSwift()
   }
+
+  /// Pretty print declarations using a default policy.
+  ///
+  /// - Returns: The pretty printed declaration or the empty string for other
+  ///   cursors.
+  public func prettyPrinted() -> String {
+    return clang_getCursorPrettyPrinted(asClang(), nil).asSwift()
+  }
+
 }
 
 extension CType {
   /// Pretty-print the underlying type using a custom printing policy.
   ///
   /// If the type is invalid, an empty string is returned.
-  public func prettyPrinted(using policy: PrintingPolicy) -> String {
+  public func prettyPrinted(using policy: borrowing PrintingPolicy) -> String {
     return clang_getTypePrettyPrinted(asClang(), policy.clang).asSwift()
   }
 }
