@@ -7,7 +7,7 @@ internal protocol FunctionLikeDecl: ClangCursorBacked {}
 
 public struct FunctionDecl: ClangCursorBacked {
   let clang: CXCursor
-  
+
   init(clang: CXCursor) {
     self.clang = clang
   }
@@ -16,14 +16,14 @@ public struct FunctionDecl: ClangCursorBacked {
   public var argumentCount: Int {
     return Int(clang_Cursor_getNumArguments(clang))
   }
-  
+
   /// Retrieve the argument cursor of a function or method.
   /// The argument cursor can be determined for calls as well as for
   /// declarations of functions or methods.
   public func parameter(at index: Int) -> Cursor? {
     return convertCursor(clang_Cursor_getArgument(clang, UInt32(index)))
   }
-  
+
   /// Retrieve the return type of the function.
   public var resultType: CType? {
     return convertType(clang_getCursorResultType(clang))
@@ -37,7 +37,7 @@ public struct FunctionDecl: ClangCursorBacked {
 
 protocol MethodDecl: ClangCursorBacked {}
 extension MethodDecl {
-  
+
   /// Determine the set of methods that are overridden by the given method.
   /// In both Objective-C and C++, a method (aka virtual member function, in
   /// C++) can override a virtual method in a base class. For Objective-C, a
@@ -81,7 +81,7 @@ extension MethodDecl {
 /// A `#include` directive.
 public struct InclusionDirective: ClangCursorBacked {
   let clang: CXCursor
-  
+
   /// Retrieve the file that is included by the given inclusion directive.
   public var includedFile: File? {
     return File(clang: clang_getIncludedFile(asClang()))
@@ -109,12 +109,12 @@ public struct ClassDecl: RecordDecl {
 
 public struct EnumConstantDecl: ClangCursorBacked {
   let clang: CXCursor
-  
+
   /// Retrieve the integer value of an enum constant declaration as an `Int`.
   public var value: Int {
     return Int(clang_getEnumConstantDeclValue(clang))
   }
-  
+
   /// Retrieve the integer value of an enum constant declaration as a `UInt`.
   public var unsignedValue: UInt {
     return UInt(clang_getEnumConstantDeclUnsignedValue(clang))
@@ -127,7 +127,7 @@ extension MacroCursor {
   public var isFunctionLike: Bool {
     return clang_Cursor_isMacroFunctionLike(clang) != 0
   }
-  
+
   /// Determine whether a macro is a built-in macro.
   public var isBuiltin: Bool {
     return clang_Cursor_isMacroBuiltin(clang) != 0
@@ -152,12 +152,12 @@ public struct CXXAccessSpecifier: ClangCursorBacked {
 
 public struct EnumDecl: ClangCursorBacked {
   let clang: CXCursor
-  
+
   /// Retrieves an array of all the constants as part of this enum.
   public func constants() -> [EnumConstantDecl] {
     return children() as! [EnumConstantDecl]
   }
-  
+
   /// Retrieve the integer type of an enum declaration.
   public var integerType: CType {
     return convertType(clang_getEnumDeclIntegerType(clang))!
@@ -227,10 +227,11 @@ public struct ObjCProtocolDecl: ClangCursorBacked {
 /// An Objective-C @property declaration.
 public struct ObjCPropertyDecl: ClangCursorBacked {
   let clang: CXCursor
-  
+
   public var attributes: ObjCPropertyAttributes {
-    return ObjCPropertyAttributes(rawValue:
-      clang_Cursor_getObjCPropertyAttributes(clang, 0))
+    return ObjCPropertyAttributes(
+      rawValue:
+        clang_Cursor_getObjCPropertyAttributes(clang, 0))
   }
 }
 
@@ -460,14 +461,14 @@ public struct MemberRefExpr: ClangCursorBacked {
 /// An expression that calls a function.
 public struct CallExpr: ClangCursorBacked {
   let clang: CXCursor
-  
+
   /// Retrieve the argument cursor of a function or method.
   /// The argument cursor can be determined for calls as well as for
   /// declarations of functions or methods.
   public func parameter(at index: Int) -> Cursor? {
     return convertCursor(clang_Cursor_getArgument(clang, UInt32(index)))
   }
-  
+
   /// Retrieve the return type of the function.
   public var resultType: CType? {
     return convertType(clang_getCursorResultType(clang))
@@ -477,14 +478,14 @@ public struct CallExpr: ClangCursorBacked {
 /// An expression that sends a message to an Objective-C object or class.
 public struct ObjCMessageExpr: ClangCursorBacked {
   let clang: CXCursor
-  
+
   /// Retrieve the argument cursor of a function or method.
   /// The argument cursor can be determined for calls as well as for
   /// declarations of functions or methods.
   public func parameter(at index: Int) -> Cursor? {
     return convertCursor(clang_Cursor_getArgument(clang, UInt32(index)))
   }
-  
+
   /// Retrieve the return type of the function.
   public var resultType: CType? {
     return convertType(clang_getCursorResultType(clang))
@@ -528,9 +529,98 @@ public struct ParenExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
+/// Describes the kind of unary operators.
+///
+/// This corresponds to libclang's `enum CXUnaryOperatorKind`.
+public enum UnaryOperatorKind: Sendable {
+  /// This value describes cursors which are not unary operators.
+  case invalid
+  /// Postfix increment operator.
+  case postInc
+  /// Postfix decrement operator.
+  case postDec
+  /// Prefix increment operator.
+  case preInc
+  /// Prefix decrement operator.
+  case preDec
+  /// Address of operator.
+  case addrOf
+  /// Dereference operator.
+  case deref
+  /// Plus operator.
+  case plus
+  /// Minus operator.
+  case minus
+  /// Not operator.
+  case not
+  /// LNot operator.
+  case lNot
+  /// "__real expr" operator.
+  case real
+  /// "__imag expr" operator.
+  case imag
+  /// __extension__ marker operator.
+  case `extension`
+  /// C++ co_await operator.
+  case coawait
+
+  init(clang: CXUnaryOperatorKind) {
+    switch clang {
+    case CXUnaryOperator_Invalid: self = .invalid
+    case CXUnaryOperator_PostInc: self = .postInc
+    case CXUnaryOperator_PostDec: self = .postDec
+    case CXUnaryOperator_PreInc: self = .preInc
+    case CXUnaryOperator_PreDec: self = .preDec
+    case CXUnaryOperator_AddrOf: self = .addrOf
+    case CXUnaryOperator_Deref: self = .deref
+    case CXUnaryOperator_Plus: self = .plus
+    case CXUnaryOperator_Minus: self = .minus
+    case CXUnaryOperator_Not: self = .not
+    case CXUnaryOperator_LNot: self = .lNot
+    case CXUnaryOperator_Real: self = .real
+    case CXUnaryOperator_Imag: self = .imag
+    case CXUnaryOperator_Extension: self = .extension
+    case CXUnaryOperator_Coawait: self = .coawait
+    default: fatalError("invalid CXUnaryOperatorKind \(clang)")
+    }
+  }
+
+  /// Retrieve the spelling of this unary operator kind.
+  public var spelling: String {
+    return clang_getUnaryOperatorKindSpelling(asClang()).asSwift()
+  }
+
+  func asClang() -> CXUnaryOperatorKind {
+    switch self {
+    case .invalid: return CXUnaryOperator_Invalid
+    case .postInc: return CXUnaryOperator_PostInc
+    case .postDec: return CXUnaryOperator_PostDec
+    case .preInc: return CXUnaryOperator_PreInc
+    case .preDec: return CXUnaryOperator_PreDec
+    case .addrOf: return CXUnaryOperator_AddrOf
+    case .deref: return CXUnaryOperator_Deref
+    case .plus: return CXUnaryOperator_Plus
+    case .minus: return CXUnaryOperator_Minus
+    case .not: return CXUnaryOperator_Not
+    case .lNot: return CXUnaryOperator_LNot
+    case .real: return CXUnaryOperator_Real
+    case .imag: return CXUnaryOperator_Imag
+    case .extension: return CXUnaryOperator_Extension
+    case .coawait: return CXUnaryOperator_Coawait
+    }
+  }
+}
+
 /// This represents the unary-expression's (except sizeof and alignof).
 public struct UnaryOperator: ClangCursorBacked {
   let clang: CXCursor
+
+  /// Retrieve the unary operator kind of this cursor.
+  ///
+  /// If this cursor is not a unary operator then returns `.invalid`.
+  public var kind: UnaryOperatorKind {
+    return UnaryOperatorKind(clang: clang_getCursorUnaryOperatorKind(clang))
+  }
 }
 
 /// [C99 6.5.2.1] Array Subscripting.
@@ -538,9 +628,306 @@ public struct ArraySubscriptExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
+/// Describes the kind of binary operators.
+///
+/// This corresponds to libclang's `enum CXBinaryOperatorKind`.
+public enum BinaryOperatorKind: Sendable {
+  /// This value describes cursors which are not binary operators.
+  case invalid
+  /// C++ Pointer - to - member operator.
+  case ptrMemD
+  /// C++ Pointer - to - member operator.
+  case ptrMemI
+  /// Multiplication operator.
+  case mul
+  /// Division operator.
+  case div
+  /// Remainder operator.
+  case rem
+  /// Addition operator.
+  case add
+  /// Subtraction operator.
+  case sub
+  /// Bitwise shift left operator.
+  case shl
+  /// Bitwise shift right operator.
+  case shr
+  /// C++ three-way comparison (spaceship) operator.
+  case cmp
+  /// Less than operator.
+  case lt
+  /// Greater than operator.
+  case gt
+  /// Less or equal operator.
+  case le
+  /// Greater or equal operator.
+  case ge
+  /// Equal operator.
+  case eq
+  /// Not equal operator.
+  case ne
+  /// Bitwise AND operator.
+  case and
+  /// Bitwise XOR operator.
+  case xor
+  /// Bitwise OR operator.
+  case or
+  /// Logical AND operator.
+  case lAnd
+  /// Logical OR operator.
+  case lOr
+  /// Assignment operator.
+  case assign
+  /// Multiplication assignment operator.
+  case mulAssign
+  /// Division assignment operator.
+  case divAssign
+  /// Remainder assignment operator.
+  case remAssign
+  /// Addition assignment operator.
+  case addAssign
+  /// Subtraction assignment operator.
+  case subAssign
+  /// Bitwise shift left assignment operator.
+  case shlAssign
+  /// Bitwise shift right assignment operator.
+  case shrAssign
+  /// Bitwise AND assignment operator.
+  case andAssign
+  /// Bitwise XOR assignment operator.
+  case xorAssign
+  /// Bitwise OR assignment operator.
+  case orAssign
+  /// Comma operator.
+  case comma
+
+  init(clang: CXBinaryOperatorKind) {
+    switch clang {
+    case CXBinaryOperator_Invalid: self = .invalid
+    case CXBinaryOperator_PtrMemD: self = .ptrMemD
+    case CXBinaryOperator_PtrMemI: self = .ptrMemI
+    case CXBinaryOperator_Mul: self = .mul
+    case CXBinaryOperator_Div: self = .div
+    case CXBinaryOperator_Rem: self = .rem
+    case CXBinaryOperator_Add: self = .add
+    case CXBinaryOperator_Sub: self = .sub
+    case CXBinaryOperator_Shl: self = .shl
+    case CXBinaryOperator_Shr: self = .shr
+    case CXBinaryOperator_Cmp: self = .cmp
+    case CXBinaryOperator_LT: self = .lt
+    case CXBinaryOperator_GT: self = .gt
+    case CXBinaryOperator_LE: self = .le
+    case CXBinaryOperator_GE: self = .ge
+    case CXBinaryOperator_EQ: self = .eq
+    case CXBinaryOperator_NE: self = .ne
+    case CXBinaryOperator_And: self = .and
+    case CXBinaryOperator_Xor: self = .xor
+    case CXBinaryOperator_Or: self = .or
+    case CXBinaryOperator_LAnd: self = .lAnd
+    case CXBinaryOperator_LOr: self = .lOr
+    case CXBinaryOperator_Assign: self = .assign
+    case CXBinaryOperator_MulAssign: self = .mulAssign
+    case CXBinaryOperator_DivAssign: self = .divAssign
+    case CXBinaryOperator_RemAssign: self = .remAssign
+    case CXBinaryOperator_AddAssign: self = .addAssign
+    case CXBinaryOperator_SubAssign: self = .subAssign
+    case CXBinaryOperator_ShlAssign: self = .shlAssign
+    case CXBinaryOperator_ShrAssign: self = .shrAssign
+    case CXBinaryOperator_AndAssign: self = .andAssign
+    case CXBinaryOperator_XorAssign: self = .xorAssign
+    case CXBinaryOperator_OrAssign: self = .orAssign
+    case CXBinaryOperator_Comma: self = .comma
+    default: fatalError("invalid CXBinaryOperatorKind \(clang)")
+    }
+  }
+
+  /// Retrieve the spelling of this binary operator kind.
+  public var spelling: String {
+    return clang_getBinaryOperatorKindSpelling(asClang()).asSwift()
+  }
+
+  func asClang() -> CXBinaryOperatorKind {
+    switch self {
+    case .invalid: return CXBinaryOperator_Invalid
+    case .ptrMemD: return CXBinaryOperator_PtrMemD
+    case .ptrMemI: return CXBinaryOperator_PtrMemI
+    case .mul: return CXBinaryOperator_Mul
+    case .div: return CXBinaryOperator_Div
+    case .rem: return CXBinaryOperator_Rem
+    case .add: return CXBinaryOperator_Add
+    case .sub: return CXBinaryOperator_Sub
+    case .shl: return CXBinaryOperator_Shl
+    case .shr: return CXBinaryOperator_Shr
+    case .cmp: return CXBinaryOperator_Cmp
+    case .lt: return CXBinaryOperator_LT
+    case .gt: return CXBinaryOperator_GT
+    case .le: return CXBinaryOperator_LE
+    case .ge: return CXBinaryOperator_GE
+    case .eq: return CXBinaryOperator_EQ
+    case .ne: return CXBinaryOperator_NE
+    case .and: return CXBinaryOperator_And
+    case .xor: return CXBinaryOperator_Xor
+    case .or: return CXBinaryOperator_Or
+    case .lAnd: return CXBinaryOperator_LAnd
+    case .lOr: return CXBinaryOperator_LOr
+    case .assign: return CXBinaryOperator_Assign
+    case .mulAssign: return CXBinaryOperator_MulAssign
+    case .divAssign: return CXBinaryOperator_DivAssign
+    case .remAssign: return CXBinaryOperator_RemAssign
+    case .addAssign: return CXBinaryOperator_AddAssign
+    case .subAssign: return CXBinaryOperator_SubAssign
+    case .shlAssign: return CXBinaryOperator_ShlAssign
+    case .shrAssign: return CXBinaryOperator_ShrAssign
+    case .andAssign: return CXBinaryOperator_AndAssign
+    case .xorAssign: return CXBinaryOperator_XorAssign
+    case .orAssign: return CXBinaryOperator_OrAssign
+    case .comma: return CXBinaryOperator_Comma
+    }
+  }
+}
+
+/// Represents a specific kind of binary operator which can appear at a cursor.
+///
+/// This corresponds to libclang's legacy `enum CX_BinaryOperatorKind`.
+public enum BinaryOperatorOpcode: Sendable {
+  case invalid
+  case ptrMemD
+  case ptrMemI
+  case mul
+  case div
+  case rem
+  case add
+  case sub
+  case shl
+  case shr
+  case cmp
+  case lt
+  case gt
+  case le
+  case ge
+  case eq
+  case ne
+  case and
+  case xor
+  case or
+  case lAnd
+  case lOr
+  case assign
+  case mulAssign
+  case divAssign
+  case remAssign
+  case addAssign
+  case subAssign
+  case shlAssign
+  case shrAssign
+  case andAssign
+  case xorAssign
+  case orAssign
+  case comma
+  case last
+
+  init(clang: CX_BinaryOperatorKind) {
+    switch clang {
+    case CX_BO_Invalid: self = .invalid
+    case CX_BO_PtrMemD: self = .ptrMemD
+    case CX_BO_PtrMemI: self = .ptrMemI
+    case CX_BO_Mul: self = .mul
+    case CX_BO_Div: self = .div
+    case CX_BO_Rem: self = .rem
+    case CX_BO_Add: self = .add
+    case CX_BO_Sub: self = .sub
+    case CX_BO_Shl: self = .shl
+    case CX_BO_Shr: self = .shr
+    case CX_BO_Cmp: self = .cmp
+    case CX_BO_LT: self = .lt
+    case CX_BO_GT: self = .gt
+    case CX_BO_LE: self = .le
+    case CX_BO_GE: self = .ge
+    case CX_BO_EQ: self = .eq
+    case CX_BO_NE: self = .ne
+    case CX_BO_And: self = .and
+    case CX_BO_Xor: self = .xor
+    case CX_BO_Or: self = .or
+    case CX_BO_LAnd: self = .lAnd
+    case CX_BO_LOr: self = .lOr
+    case CX_BO_Assign: self = .assign
+    case CX_BO_MulAssign: self = .mulAssign
+    case CX_BO_DivAssign: self = .divAssign
+    case CX_BO_RemAssign: self = .remAssign
+    case CX_BO_AddAssign: self = .addAssign
+    case CX_BO_SubAssign: self = .subAssign
+    case CX_BO_ShlAssign: self = .shlAssign
+    case CX_BO_ShrAssign: self = .shrAssign
+    case CX_BO_AndAssign: self = .andAssign
+    case CX_BO_XorAssign: self = .xorAssign
+    case CX_BO_OrAssign: self = .orAssign
+    case CX_BO_Comma: self = .comma
+    case CX_BO_LAST: self = .last
+    default: fatalError("invalid CX_BinaryOperatorKind \(clang)")
+    }
+  }
+
+  /// Returns a string containing the spelling of the binary operator.
+  public var spelling: String {
+    return clang_Cursor_getBinaryOpcodeStr(asClang()).asSwift()
+  }
+
+  func asClang() -> CX_BinaryOperatorKind {
+    switch self {
+    case .invalid: return CX_BO_Invalid
+    case .ptrMemD: return CX_BO_PtrMemD
+    case .ptrMemI: return CX_BO_PtrMemI
+    case .mul: return CX_BO_Mul
+    case .div: return CX_BO_Div
+    case .rem: return CX_BO_Rem
+    case .add: return CX_BO_Add
+    case .sub: return CX_BO_Sub
+    case .shl: return CX_BO_Shl
+    case .shr: return CX_BO_Shr
+    case .cmp: return CX_BO_Cmp
+    case .lt: return CX_BO_LT
+    case .gt: return CX_BO_GT
+    case .le: return CX_BO_LE
+    case .ge: return CX_BO_GE
+    case .eq: return CX_BO_EQ
+    case .ne: return CX_BO_NE
+    case .and: return CX_BO_And
+    case .xor: return CX_BO_Xor
+    case .or: return CX_BO_Or
+    case .lAnd: return CX_BO_LAnd
+    case .lOr: return CX_BO_LOr
+    case .assign: return CX_BO_Assign
+    case .mulAssign: return CX_BO_MulAssign
+    case .divAssign: return CX_BO_DivAssign
+    case .remAssign: return CX_BO_RemAssign
+    case .addAssign: return CX_BO_AddAssign
+    case .subAssign: return CX_BO_SubAssign
+    case .shlAssign: return CX_BO_ShlAssign
+    case .shrAssign: return CX_BO_ShrAssign
+    case .andAssign: return CX_BO_AndAssign
+    case .xorAssign: return CX_BO_XorAssign
+    case .orAssign: return CX_BO_OrAssign
+    case .comma: return CX_BO_Comma
+    case .last: return CX_BO_LAST
+    }
+  }
+}
+
 /// A builtin binary operation expression such as "x + y" or "x <= y".
 public struct BinaryOperator: ClangCursorBacked {
   let clang: CXCursor
+
+  /// Retrieve the binary operator kind of this cursor.
+  ///
+  /// If this cursor is not a binary operator then returns `.invalid`.
+  public var kind: BinaryOperatorKind {
+    return BinaryOperatorKind(clang: clang_getCursorBinaryOperatorKind(clang))
+  }
+
+  /// Returns the operator code for the binary operator.
+  public var opcode: BinaryOperatorOpcode {
+    return BinaryOperatorOpcode(clang: clang_Cursor_getBinaryOpcode(clang))
+  }
 }
 
 /// Compound assignment such as "+=".
@@ -737,56 +1124,58 @@ public struct ObjCSelfExpr: ClangCursorBacked {
 }
 
 /// OpenMP 4.0 [2.4, Array Section].
+///  OpenMP 5.0 [2.1.5, Array Section].
+/// OpenACC 3.3 [2.7.1, Data Specification for Data Clauses (Sub Arrays)]
 public struct OMPArraySectionExpr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ArraySectionExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// Fixed point literal
 public struct FixedPointLiteral: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP 5.0 [2.1.4, Array Shaping].
 public struct OMPArrayShapingExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// OpenMP 5.0 [2.1.6 Iterators]
 public struct OMPIteratorExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenCL's addrspace_cast<> expression.
 public struct CXXAddrspaceCastExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// Expression that references a C++20 concept.
 public struct ConceptSpecializationExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// Expression that references a C++20 requires expression.
 public struct RequiresExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// Expression that references a C++20 parenthesized list aggregate
+/// initializer.
 public struct CXXParenListInitExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  Represents a C++26 pack indexing expression.
 public struct PackIndexingExpr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  C++2a std::bit_cast expression.
 public struct BuiltinBitCastExpr: ClangCursorBacked {
   let clang: CXCursor
 }
@@ -1163,257 +1552,257 @@ public struct OMPTargetParallelForSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target simd directive.
 public struct OMPTargetSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP teams distribute directive.
 public struct OMPTeamsDistributeDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP teams distribute simd directive.
 public struct OMPTeamsDistributeSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP teams distribute parallel for directive.
 public struct OMPTeamsDistributeParallelForDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP teams distribute parallel for simd directive.
 public struct OMPTeamsDistributeParallelForSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target teams directive.
 public struct OMPTargetTeamsDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target teams distribute directive.
 public struct OMPTargetTeamsDistributeDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target teams distribute parallel for directive.
 public struct OMPTargetTeamsDistributeParallelForDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target teams distribute parallel for simd directive.
 public struct OMPTargetTeamsDistributeParallelForSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target teams distribute simd directive.
 public struct OMPTargetTeamsDistributeSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP master taskloop directive.
 public struct OMPMasterTaskLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel master taskloop directive.
 public struct OMPParallelMasterTaskLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP master taskloop simd directive.
 public struct OMPMasterTaskLoopSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel master taskloop simd directive.
 public struct OMPParallelMasterTaskLoopSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel master directive.
 public struct OMPParallelMasterDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP depobj directive.
 public struct OMPDepobjDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP scan directive.
 public struct OMPScanDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP tile directive.
 public struct OMPTileDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP canonical loop.
 public struct OMPCanonicalLoop: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP interop directive.
 public struct OMPInteropDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP dispatch directive.
 public struct OMPDispatchDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP masked directive.
 public struct OMPMaskedDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP unroll directive.
 public struct OMPUnrollDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP metadirective directive.
 public struct OMPMetaDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP loop directive.
 public struct OMPGenericLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP teams loop directive.
 public struct OMPTeamsGenericLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target teams loop directive.
 public struct OMPTargetTeamsGenericLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel loop directive.
 public struct OMPParallelGenericLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP target parallel loop directive.
 public struct OMPTargetParallelGenericLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel masked directive.
 public struct OMPParallelMaskedDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP masked taskloop directive.
 public struct OMPMaskedTaskLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP masked taskloop simd directive.
 public struct OMPMaskedTaskLoopSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel masked taskloop directive.
 public struct OMPParallelMaskedTaskLoopDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP parallel masked taskloop simd directive.
 public struct OMPParallelMaskedTaskLoopSimdDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP error directive.
 public struct OMPErrorDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP scope directive.
 public struct OMPScopeDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP reverse directive.
 public struct OMPReverseDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP interchange directive.
 public struct OMPInterchangeDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenMP assume directive.
 public struct OMPAssumeDirective: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC Compute Construct.
 public struct OpenACCComputeConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC Loop Construct.
 public struct OpenACCLoopConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC Combined Constructs.
 public struct OpenACCCombinedConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC data Construct.
 public struct OpenACCDataConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC enter data Construct.
 public struct OpenACCEnterDataConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC exit data Construct.
 public struct OpenACCExitDataConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC host_data Construct.
 public struct OpenACCHostDataConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC wait Construct.
 public struct OpenACCWaitConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC init Construct.
 public struct OpenACCInitConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC shutdown Construct.
 public struct OpenACCShutdownConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC set Construct.
 public struct OpenACCSetConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+///  OpenACC update Construct.
 public struct OpenACCUpdateConstruct: ClangCursorBacked {
   let clang: CXCursor
 }
@@ -1425,226 +1814,183 @@ public struct TranslationUnitCursor: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct UnexposedAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct IBActionAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct IBOutletAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct IBOutletCollectionAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct CXXFinalAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct CXXOverrideAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct AnnotateAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct AsmLabelAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct PackedAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct PureAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ConstAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct NoDuplicateAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct CUDAConstantAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct CUDADeviceAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct CUDAGlobalAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct CUDAHostAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct CUDASharedAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct VisibilityAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct DLLExport: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct DLLImport: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct NSReturnsRetained: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct NSReturnsNotRetained: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct NSReturnsAutoreleased: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct NSConsumesSelf: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct NSConsumed: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ObjCException: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ObjCNSObject: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ObjCIndependentClass: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ObjCPreciseLifetime: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ObjCReturnsInnerPointer: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ObjCRequiresSuper: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ObjCRootClass: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ObjCSubclassingRestricted: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ObjCExplicitProtocolImpl: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ObjCDesignatedInitializer: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct ObjCRuntimeVisible: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ObjCBoxable: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct FlagEnum: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct ConvergentAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct WarnUnusedAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
 public struct WarnUnusedResultAttr: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct AlignedAttr: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// a friend declaration.
 public struct FriendDecl: ClangCursorBacked {
   let clang: CXCursor
 }
 
-
+/// a concept declaration.
 public struct ConceptDecl: ClangCursorBacked {
   let clang: CXCursor
 }
-
 
 public struct PreprocessingDirective: ClangCursorBacked {
   let clang: CXCursor
@@ -1669,27 +2015,29 @@ public struct OverloadCandidate: ClangCursorBacked {
   let clang: CXCursor
 }
 
+
 /// Converts a CXCursor to a Cursor, returning `nil` if it was unsuccessful
 func convertCursor(_ clang: CXCursor) -> Cursor? {
   if clang_Cursor_isNull(clang) != 0 { return nil }
   switch clang.kind {
-  case CXCursor_FirstDecl,
-       CXCursor_LastDecl,
-       CXCursor_FirstRef,
-       CXCursor_LastRef,
-       CXCursor_FirstInvalid,
-       CXCursor_LastInvalid,
-       CXCursor_FirstExpr,
-       CXCursor_LastExpr,
-       CXCursor_FirstStmt,
-       CXCursor_LastStmt,
-       CXCursor_FirstAttr,
-       CXCursor_LastAttr,
-       CXCursor_FirstPreprocessing,
-       CXCursor_LastPreprocessing,
-       CXCursor_FirstExtraDecl,
-       CXCursor_LastExtraDecl:
-    fatalError("unexpected CXCursorKind sentinel \(clang)")
+
+  // These are aliases for others, thus don't need to be handled.
+  // CXCursor_FirstDecl
+  // CXCursor_LastDecl
+  // CXCursor_FirstRef
+  // CXCursor_LastRef
+  // CXCursor_FirstInvalid
+  // CXCursor_LastInvalid
+  // CXCursor_FirstExpr
+  // CXCursor_LastExpr
+  // CXCursor_FirstStmt
+  // CXCursor_LastStmt
+  // CXCursor_FirstAttr
+  // CXCursor_LastAttr
+  // CXCursor_FirstPreprocessing
+  // CXCursor_LastPreprocessing
+  // CXCursor_FirstExtraDecl
+  // CXCursor_LastExtraDecl
   case CXCursor_UnexposedDecl: return UnexposedDecl(clang: clang)
   case CXCursor_StructDecl: return StructDecl(clang: clang)
   case CXCursor_UnionDecl: return UnionDecl(clang: clang)
@@ -1721,7 +2069,8 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_TemplateTemplateParameter: return TemplateTemplateParameter(clang: clang)
   case CXCursor_FunctionTemplate: return FunctionTemplate(clang: clang)
   case CXCursor_ClassTemplate: return ClassTemplate(clang: clang)
-  case CXCursor_ClassTemplatePartialSpecialization: return ClassTemplatePartialSpecialization(clang: clang)
+  case CXCursor_ClassTemplatePartialSpecialization:
+    return ClassTemplatePartialSpecialization(clang: clang)
   case CXCursor_NamespaceAlias: return NamespaceAlias(clang: clang)
   case CXCursor_UsingDirective: return UsingDirective(clang: clang)
   case CXCursor_UsingDeclaration: return UsingDeclaration(clang: clang)
@@ -1869,24 +2218,36 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_OMPTargetParallelDirective: return OMPTargetParallelDirective(clang: clang)
   case CXCursor_OMPTargetParallelForDirective: return OMPTargetParallelForDirective(clang: clang)
   case CXCursor_OMPTargetUpdateDirective: return OMPTargetUpdateDirective(clang: clang)
-  case CXCursor_OMPDistributeParallelForDirective: return OMPDistributeParallelForDirective(clang: clang)
-  case CXCursor_OMPDistributeParallelForSimdDirective: return OMPDistributeParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPDistributeParallelForDirective:
+    return OMPDistributeParallelForDirective(clang: clang)
+  case CXCursor_OMPDistributeParallelForSimdDirective:
+    return OMPDistributeParallelForSimdDirective(clang: clang)
   case CXCursor_OMPDistributeSimdDirective: return OMPDistributeSimdDirective(clang: clang)
-  case CXCursor_OMPTargetParallelForSimdDirective: return OMPTargetParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPTargetParallelForSimdDirective:
+    return OMPTargetParallelForSimdDirective(clang: clang)
   case CXCursor_OMPTargetSimdDirective: return OMPTargetSimdDirective(clang: clang)
   case CXCursor_OMPTeamsDistributeDirective: return OMPTeamsDistributeDirective(clang: clang)
-  case CXCursor_OMPTeamsDistributeSimdDirective: return OMPTeamsDistributeSimdDirective(clang: clang)
-  case CXCursor_OMPTeamsDistributeParallelForDirective: return OMPTeamsDistributeParallelForDirective(clang: clang)
-  case CXCursor_OMPTeamsDistributeParallelForSimdDirective: return OMPTeamsDistributeParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeSimdDirective:
+    return OMPTeamsDistributeSimdDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeParallelForDirective:
+    return OMPTeamsDistributeParallelForDirective(clang: clang)
+  case CXCursor_OMPTeamsDistributeParallelForSimdDirective:
+    return OMPTeamsDistributeParallelForSimdDirective(clang: clang)
   case CXCursor_OMPTargetTeamsDirective: return OMPTargetTeamsDirective(clang: clang)
-  case CXCursor_OMPTargetTeamsDistributeDirective: return OMPTargetTeamsDistributeDirective(clang: clang)
-  case CXCursor_OMPTargetTeamsDistributeParallelForDirective: return OMPTargetTeamsDistributeParallelForDirective(clang: clang)
-  case CXCursor_OMPTargetTeamsDistributeParallelForSimdDirective: return OMPTargetTeamsDistributeParallelForSimdDirective(clang: clang)
-  case CXCursor_OMPTargetTeamsDistributeSimdDirective: return OMPTargetTeamsDistributeSimdDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeDirective:
+    return OMPTargetTeamsDistributeDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeParallelForDirective:
+    return OMPTargetTeamsDistributeParallelForDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeParallelForSimdDirective:
+    return OMPTargetTeamsDistributeParallelForSimdDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsDistributeSimdDirective:
+    return OMPTargetTeamsDistributeSimdDirective(clang: clang)
   case CXCursor_OMPMasterTaskLoopDirective: return OMPMasterTaskLoopDirective(clang: clang)
-  case CXCursor_OMPParallelMasterTaskLoopDirective: return OMPParallelMasterTaskLoopDirective(clang: clang)
+  case CXCursor_OMPParallelMasterTaskLoopDirective:
+    return OMPParallelMasterTaskLoopDirective(clang: clang)
   case CXCursor_OMPMasterTaskLoopSimdDirective: return OMPMasterTaskLoopSimdDirective(clang: clang)
-  case CXCursor_OMPParallelMasterTaskLoopSimdDirective: return OMPParallelMasterTaskLoopSimdDirective(clang: clang)
+  case CXCursor_OMPParallelMasterTaskLoopSimdDirective:
+    return OMPParallelMasterTaskLoopSimdDirective(clang: clang)
   case CXCursor_OMPParallelMasterDirective: return OMPParallelMasterDirective(clang: clang)
   case CXCursor_OMPDepobjDirective: return OMPDepobjDirective(clang: clang)
   case CXCursor_OMPScanDirective: return OMPScanDirective(clang: clang)
@@ -1899,14 +2260,19 @@ func convertCursor(_ clang: CXCursor) -> Cursor? {
   case CXCursor_OMPMetaDirective: return OMPMetaDirective(clang: clang)
   case CXCursor_OMPGenericLoopDirective: return OMPGenericLoopDirective(clang: clang)
   case CXCursor_OMPTeamsGenericLoopDirective: return OMPTeamsGenericLoopDirective(clang: clang)
-  case CXCursor_OMPTargetTeamsGenericLoopDirective: return OMPTargetTeamsGenericLoopDirective(clang: clang)
-  case CXCursor_OMPParallelGenericLoopDirective: return OMPParallelGenericLoopDirective(clang: clang)
-  case CXCursor_OMPTargetParallelGenericLoopDirective: return OMPTargetParallelGenericLoopDirective(clang: clang)
+  case CXCursor_OMPTargetTeamsGenericLoopDirective:
+    return OMPTargetTeamsGenericLoopDirective(clang: clang)
+  case CXCursor_OMPParallelGenericLoopDirective:
+    return OMPParallelGenericLoopDirective(clang: clang)
+  case CXCursor_OMPTargetParallelGenericLoopDirective:
+    return OMPTargetParallelGenericLoopDirective(clang: clang)
   case CXCursor_OMPParallelMaskedDirective: return OMPParallelMaskedDirective(clang: clang)
   case CXCursor_OMPMaskedTaskLoopDirective: return OMPMaskedTaskLoopDirective(clang: clang)
   case CXCursor_OMPMaskedTaskLoopSimdDirective: return OMPMaskedTaskLoopSimdDirective(clang: clang)
-  case CXCursor_OMPParallelMaskedTaskLoopDirective: return OMPParallelMaskedTaskLoopDirective(clang: clang)
-  case CXCursor_OMPParallelMaskedTaskLoopSimdDirective: return OMPParallelMaskedTaskLoopSimdDirective(clang: clang)
+  case CXCursor_OMPParallelMaskedTaskLoopDirective:
+    return OMPParallelMaskedTaskLoopDirective(clang: clang)
+  case CXCursor_OMPParallelMaskedTaskLoopSimdDirective:
+    return OMPParallelMaskedTaskLoopSimdDirective(clang: clang)
   case CXCursor_OMPErrorDirective: return OMPErrorDirective(clang: clang)
   case CXCursor_OMPScopeDirective: return OMPScopeDirective(clang: clang)
   case CXCursor_OMPReverseDirective: return OMPReverseDirective(clang: clang)

@@ -154,6 +154,24 @@ public struct TranslationUnitOptions: OptionSet, Sendable {
       CXTranslationUnit_RetainExcludedConditionalBlocks.rawValue)
 }
 
+/// Flags that control the reparsing of translation units.
+///
+/// The enumerators in this enumeration type are meant to be bitwise ORed
+/// together to specify which options should be used when reparsing the
+/// translation unit.
+public struct ReparseOptions: OptionSet, Sendable {
+  public typealias RawValue = UInt32
+  public let rawValue: RawValue
+
+  /// Creates a new `ReparseOptions` from a raw integer value.
+  public init(rawValue: RawValue) {
+    self.rawValue = rawValue
+  }
+
+  /// Used to indicate that no special reparsing options are needed.
+  public static let none = ReparseOptions(rawValue: CXReparse_None.rawValue)
+}
+
 /// Flags that control how translation units are saved.
 /// The enumerators in this enumeration type are meant to be bitwise ORed
 /// together to specify which options should be used when saving the translation
@@ -442,10 +460,8 @@ public class TranslationUnit {
   }
 
   /// Returns the set of flags that is suitable for reparsing a translation unit.
-  public var defaultReparseOptions: TranslationUnitOptions {
-    return TranslationUnitOptions(
-      rawValue:
-        clang_defaultReparseOptions(self.clang))
+  public var defaultReparseOptions: ReparseOptions {
+    return ReparseOptions(rawValue: clang_defaultReparseOptions(self.clang))
   }
 
   /// Reparse the source files that produced this translation unit.
@@ -476,7 +492,7 @@ public class TranslationUnit {
   ///           successfully.
   public func reparseTransaltionUnit(
     using unsavedFiles: [UnsavedFile],
-    options: TranslationUnitOptions
+    options: ReparseOptions
   ) throws {
     var cxUnsavedFiles = unsavedFiles.map { $0.clang }
     let err = CXErrorCode(

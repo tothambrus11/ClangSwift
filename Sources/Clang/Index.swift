@@ -165,6 +165,10 @@ public struct IdxDeclInfo {
     return clang.isImplicit != 0
   }
 
+  public var flags: IdxDeclInfoFlags {
+    return IdxDeclInfoFlags(rawValue: clang.flags)
+  }
+
   /// Get location of the declaration.
   public var loc: SourceLocation {
     return SourceLocation(clang: clang_indexLoc_getCXSourceLocation(clang.loc))
@@ -176,7 +180,6 @@ public struct IdxDeclInfo {
   // TODO: declAsContainer: UnsafePointer<CXIdxContainerInfo>!
   // TODO: attributes: UnsafePointer<UnsafePointer<CXIdxAttrInfo>?>!
   // TODO: numAttributes: UInt32
-  // TODO: flags: UInt32
 }
 
 /// Closure type used with `IndexerCallbacks`.

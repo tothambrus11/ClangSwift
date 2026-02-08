@@ -78,11 +78,48 @@ public struct TextComment: Comment {
 public struct InlineCommandComment: Comment {
   public let clang: CXComment
 
+  /// Returns the most appropriate rendering mode, chosen on command
+  /// semantics in Doxygen.
+  public var renderKind: InlineCommandRenderKind? {
+    return InlineCommandRenderKind(clang: clang_InlineCommandComment_getRenderKind(clang))
+  }
+
   /// Retrieves all arguments of this inline command.
   public var arguments: AnyRandomAccessCollection<String> {
     let count = clang_InlineCommandComment_getNumArgs(clang)
     return AnyRandomAccessCollection(count: count) { index in
       return clang_InlineCommandComment_getArgText(self.clang, index).asSwift()
+    }
+  }
+}
+
+/// The most appropriate rendering mode for an inline command, chosen on
+/// command semantics in Doxygen.
+public enum InlineCommandRenderKind {
+  /// Command argument should be rendered in a normal font.
+  case normal
+
+  /// Command argument should be rendered in a bold font.
+  case bold
+
+  /// Command argument should be rendered in a monospaced font.
+  case monospaced
+
+  /// Command argument should be rendered emphasized (typically italic
+  /// font).
+  case emphasized
+
+  /// Command argument should not be rendered (since it only defines an anchor).
+  case anchor
+
+  internal init?(clang: CXCommentInlineCommandRenderKind) {
+    switch clang {
+    case CXCommentInlineCommandRenderKind_Normal: self = .normal
+    case CXCommentInlineCommandRenderKind_Bold: self = .bold
+    case CXCommentInlineCommandRenderKind_Monospaced: self = .monospaced
+    case CXCommentInlineCommandRenderKind_Emphasized: self = .emphasized
+    case CXCommentInlineCommandRenderKind_Anchor: self = .anchor
+    default: return nil
     }
   }
 }
