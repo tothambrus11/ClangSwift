@@ -4,31 +4,57 @@ import cclang
 ///
 /// See `clang::PrintingPolicy` for more information.
 public enum PrintingPolicyProperty {
+  /// The number of spaces to use to indent each line.
   case indentation
+  /// Whether we should suppress printing of the actual specifiers for the given type or declaration.
   case suppressSpecifiers
+  /// Whether type printing should skip printing the tag keyword.
   case suppressTagKeyword
+  /// When true, include the body of a tag definition.
   case includeTagDefinition
+  /// Suppresses printing of scope specifiers.
   case suppressScope
+  /// Suppress printing parts of scope specifiers that are never written, e.g., for anonymous namespaces.
   case suppressUnwrittenScope
+  /// Suppress printing of variable initializers.
   case suppressInitializers
+  /// Whether we should print the sizes of constant array expressions as written in the sources.
   case constantArraySizeAsWritten
+  /// When printing an anonymous tag name, also print the location of that entity (e.g., "enum <anonymous at t.h:10:5>").
   case anonymousTagLocations
+  /// When true, suppress printing of the __strong lifetime qualifier in ARC.
   case suppressStrongLifetime
+  /// When true, suppress printing of lifetime qualifier in ARC.
   case suppressLifetimeQualifiers
+  /// When true, suppresses printing template arguments in names of C++ constructors.
   case suppressTemplateArgsInCXXConstructors
+  /// Whether we can use `bool` rather than `_Bool` (even if the language doesn't actually have `bool`, because, e.g., it is defined as a macro).
   case bool
+  /// Whether we can use `restrict` rather than `__restrict`.
   case restrict
+  /// Whether we can use `alignof` rather than `__alignof`.
   case alignof
+  /// Whether we can use `_Alignof` rather than `__alignof`.
   case underscoreAlignof
+  /// Whether we should use `(void)` rather than `()` for a function prototype with zero parameters.
   case useVoidForZeroParams
+  /// Provide a terse output.
   case terseOutput
+  /// When true, do certain refinement needed for producing proper declaration tag; such as, do not print attributes attached to the declaration.
   case polishForDeclaration
+  /// When true, print the half-precision floating-point type as `half` instead of `__fp16`.
   case half
+  /// When true, print the built-in wchar_t type as `__wchar_t`.
   case mswChar
+  /// When true, include newlines after statements like "break", etc.
   case includeNewlines
+  /// Use whitespace and punctuation like MSVC does.
   case msvcFormatting
+  /// Whether we should print the constant expressions as written in the sources.
   case constantsAsWritten
+  /// When true, don't print the implicit `self` or `this` expressions.
   case suppressImplicitBase
+  /// When true, print the fully qualified name of function declarations.
   case fullyQualifiedName
 
   internal init?(clang: CXPrintingPolicyProperty) {
@@ -108,6 +134,13 @@ public final class PrintingPolicy {
 
   fileprivate init(clang: CXPrintingPolicy) {
     self.clang = clang
+  }
+
+  /// Initialize a PrintingPolicy from a cursor.
+  ///
+  /// - Parameter cursor: The cursor to get the printing policy from.
+  public convenience init(cursor: Cursor) {
+    self.init(clang: clang_getCursorPrintingPolicy(cursor.asClang()))
   }
 
   deinit {

@@ -194,6 +194,11 @@ extension Cursor {
     return convertType(clang_getCursorType(asClang()))
   }
 
+  // Retrieves the result type of this cursor (if any).
+  public var resultType: CType? {
+    return convertType(clang_getCursorResultType(asClang()))
+  }
+
   /// Returns the translation unit that a cursor originated from.
   public var translationUnit: TranslationUnit {
     return TranslationUnit(clang: clang_Cursor_getTranslationUnit(asClang()), owned: false)
