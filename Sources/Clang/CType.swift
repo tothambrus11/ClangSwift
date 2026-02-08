@@ -65,7 +65,7 @@ extension CXType: CType {
   }
 }
 
-/// Determines if two C types are equal to each other.
+/// Determines if two types are equal to each other.
 public func == (lhs: CType, rhs: CType) -> Bool {
   return clang_equalTypes(lhs.asClang(), rhs.asClang()) != 0
 }
@@ -128,8 +128,12 @@ extension CType {
   ///
   /// Policy - Further refine the type formatting
   /// withGlobalNamespacePrefix - whether to prepend a '::' to qualified names
-  public func fullyQualifiedName(using printingPolicy: borrowing PrintingPolicy, withGlobalNamespacePrefix: Bool = true) -> String {
-    return clang_getFullyQualifiedName(asClang(), printingPolicy.asClang(), withGlobalNamespacePrefix ? 1 : 0).asSwift()
+  public func fullyQualifiedName(
+    using printingPolicy: borrowing PrintingPolicy, withGlobalNamespacePrefix: Bool = true
+  ) -> String {
+    return clang_getFullyQualifiedName(
+      asClang(), printingPolicy.asClang(), withGlobalNamespacePrefix ? 1 : 0
+    ).asSwift()
   }
 
   /// Return the canonical type for a CType.
@@ -151,6 +155,42 @@ extension CType {
   /// Retrieve the nullability kind of a pointer type.
   public var nullability: TypeNullabilityKind? {
     return TypeNullabilityKind(clang: clang_Type_getNullability(asClang()))
+  }
+
+  /// Determine whether the type has the "const" qualifier set,
+  /// without looking through typedefs that may have added "const" at a
+  /// different level.
+  public var isLiterallyConstQualified: Bool {
+    return clang_isConstQualifiedType(asClang()) != 0
+  }
+
+  /// Determines whether the type is const-qualified.
+  public var isConstQualified: Bool {
+    return clang_isConstQualifiedType(canonicalType.asClang()) != 0
+  }
+
+  /// Determine whether a type has the "volatile" qualifier set,
+  /// without looking through typedefs that may have added "volatile" at
+  /// a different level.
+  public var isLiterallyVolatileQualified: Bool {
+    return clang_isVolatileQualifiedType(asClang()) != 0
+  }
+
+  /// Determines whether the type is volatile-qualified.
+  public var isVolatileQualified: Bool {
+    return clang_isVolatileQualifiedType(canonicalType.asClang()) != 0
+  }
+
+  /// Determine whether a type has the "restrict" qualifier set,
+  /// without looking through typedefs that may have added "restrict" at a
+  /// different level.
+  public var isLiterallyRestrictQualified: Bool {
+    return clang_isRestrictQualifiedType(asClang()) != 0
+  }
+
+  /// Determines whether the type is restrict-qualified.
+  public var isRestrictQualified: Bool {
+    return clang_isRestrictQualifiedType(canonicalType.asClang()) != 0
   }
 }
 

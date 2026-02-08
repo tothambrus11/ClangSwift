@@ -46,4 +46,13 @@ enum TestHelpers {
   static func firstStruct(named name: String, in tu: TranslationUnit) -> Cursor? {
     firstOfAKind(StructDecl.self, named: name, in: tu)
   }
+
+  static func firstCursor(named: String, in tu: TranslationUnit) -> Cursor? {
+    firstCursor(in: tu) { cursor in
+      if cursor.description == named {
+        return cursor
+      }
+      return nil
+    }
+  }
 }
