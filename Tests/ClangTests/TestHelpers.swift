@@ -47,6 +47,31 @@ enum TestHelpers {
     firstOfAKind(StructDecl.self, named: name, in: tu)
   }
 
+  static func firstUnion(named name: String, in tu: TranslationUnit) -> Cursor? {
+    firstOfAKind(UnionDecl.self, named: name, in: tu)
+  }
+
+  static func firstEnum(named name: String, in tu: TranslationUnit) -> Cursor? {
+    firstOfAKind(EnumDecl.self, named: name, in: tu)
+  }
+
+  static func firstNamespace(named name: String, in tu: TranslationUnit) -> Cursor? {
+    firstOfAKind(Namespace.self, named: name, in: tu)
+  }
+
+  static func firstClass(named name: String, in tu: TranslationUnit) -> Cursor? {
+    firstOfAKind(ClassDecl.self, named: name, in: tu)
+  }
+
+  static func firstCursorOfType<T: Cursor>(_ type: T.Type, in tu: TranslationUnit) -> Cursor? {
+    firstCursor(in: tu) { cursor in
+      if cursor is T {
+        return cursor
+      }
+      return nil
+    }
+  }
+
   static func firstCursor(named: String, in tu: TranslationUnit) -> Cursor? {
     firstCursor(in: tu) { cursor in
       if cursor.description == named {

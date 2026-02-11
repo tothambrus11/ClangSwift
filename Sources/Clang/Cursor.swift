@@ -383,7 +383,7 @@ extension Cursor {
     return clang_isUnexposed(asClang().kind) != 0
   }
 
-  /// Determine whether the given cursor is `nil` or not.
+  /// Determines whether the given cursor is `nil` or not.
   public var isNull: Bool {
     return clang_Cursor_isNull(asClang()) != 0
   }
@@ -391,7 +391,28 @@ extension Cursor {
   public var spelling: String {
     return clang_getCursorSpelling(asClang()).asSwift()
   }
+  
+  /// Determines whether the given cursor represents an anonymous
+  /// namespace or tag (enum, union, struct).
+  public var isAnonymous: Bool {
+    return clang_Cursor_isAnonymous(asClang()) != 0
+  }
 
+  /// Determines whether the given cursor represents an anonymous record declaration.
+  /// 
+  /// This is a more specific check than `isAnonymous`. It returns `true` only for
+  /// anonymous struct or union members that have no field name.
+  ///
+  /// Examples:
+  /// - `struct Outer { struct { int x; }; };` → inner struct returns `true`
+  /// - `struct { int x; } point;` → returns `false` (has variable name "point")
+  /// - `struct Named { int x; };` → returns `false` (type has a name)
+  ///
+  /// Applies only to structs and unions, not enums or namespaces.
+  public var isAnonymousRecordDeclaration: Bool {
+    return clang_Cursor_isAnonymousRecordDecl(asClang()) != 0
+  }
+  
   /// If cursor is a statement declaration tries to evaluate the statement and
   /// if its variable, tries to evaluate its initializer, into its
   /// corresponding type.
