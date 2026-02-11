@@ -1,18 +1,38 @@
 import XCTest
-@testable import Clang
 import cclang
 
+@testable import Clang
 
 final class CTypeAndCursorIntegrationTests: XCTestCase {
+
+  func testSpelling() throws {
+    let src = #"""
+      struct Foo { int a; char b; };
+      int add(MyInt x, int y) { return x + y; }
+      """#
+
+    let tu = try TestHelpers.makeTU(source: src, language: .c, args: ["-Wall"])
+
+    guard let add = TestHelpers.firstFunction(named: "add", in: tu) else {
+      return XCTFail("Failed to find add")
+    }
+    XCTAssertEqual("add", add.spelling)
+
+    guard let foo = TestHelpers.firstStruct(named: "Foo", in: tu) else {
+      return XCTFail("Failed to find add")
+    }
+    XCTAssertEqual("Foo", foo.spelling)
+  }
+
   func testCTypeCanonicalTypeEncodingAndLayout() throws {
     let src = #"""
-    typedef int MyInt;
+      typedef int MyInt;
 
-    struct Foo { int a; char b; };
-    struct Foo globalFoo;
+      struct Foo { int a; char b; };
+      struct Foo globalFoo;
 
-    int add(MyInt x, int y) { return x + y; }
-    """#
+      int add(MyInt x, int y) { return x + y; }
+      """#
 
     let tu = try TestHelpers.makeTU(source: src, language: .c, args: ["-Wall"])
 
@@ -70,10 +90,10 @@ final class CTypeAndCursorIntegrationTests: XCTestCase {
 
   func testCursorCoreRelationships() throws {
     let src = #"""
-    int f(int a) { return a; }
-    int g(void) { return f(1); }
-    __attribute__((unused)) int v;
-    """#
+      int f(int a) { return a; }
+      int g(void) { return f(1); }
+      __attribute__((unused)) int v;
+      """#
 
     let tu = try TestHelpers.makeTU(source: src, language: .c, args: ["-Wall"])
 
@@ -114,14 +134,14 @@ final class CTypeAndCursorIntegrationTests: XCTestCase {
 
   func testCxxRefQualifierIsExposed() throws {
     let src = #"""
-    struct S {
-      int m() &;
-      int n() &&;
-    };
+      struct S {
+        int m() &;
+        int n() &&;
+      };
 
-    int S::m() & { return 1; }
-    int S::n() && { return 2; }
-    """#
+      int S::m() & { return 1; }
+      int S::n() && { return 2; }
+      """#
 
     let tu = try TestHelpers.makeTU(source: src, language: .cPlusPlus, args: ["-std=c++17"])
 
@@ -144,16 +164,16 @@ final class CTypeAndCursorIntegrationTests: XCTestCase {
 
   func testIsConstQualified() throws {
     let src = #"""
-    int plainInt;
-    const int constInt = 42;
-    const int* ptrToConst;
-    int* const constPtr = 0;
-    const int* const constPtrToConst = 0;
-    volatile int volatileInt;
-    const volatile int constVolatileInt;
-    typedef const volatile int TypeAliasToConstVolatileInt;
-    TypeAliasToConstVolatileInt aliasToConstVolatileInt;
-    """#
+      int plainInt;
+      const int constInt = 42;
+      const int* ptrToConst;
+      int* const constPtr = 0;
+      const int* const constPtrToConst = 0;
+      volatile int volatileInt;
+      const volatile int constVolatileInt;
+      typedef const volatile int TypeAliasToConstVolatileInt;
+      TypeAliasToConstVolatileInt aliasToConstVolatileInt;
+      """#
 
     let tu = try TestHelpers.makeTU(source: src, language: .c, args: ["-Wall"])
 
@@ -198,7 +218,8 @@ final class CTypeAndCursorIntegrationTests: XCTestCase {
     XCTAssertFalse(constPtrType.isLiterallyVolatileQualified)
 
     // Test const int* const (const pointer to const) - the pointer SHOULD be const
-    let constPtrToConstCursor  = try XCTUnwrap(TestHelpers.firstCursor(named: "constPtrToConst", in: tu))
+    let constPtrToConstCursor = try XCTUnwrap(
+      TestHelpers.firstCursor(named: "constPtrToConst", in: tu))
     let constPtrToConstType = try XCTUnwrap(constPtrToConstCursor.type)
     XCTAssertTrue(constPtrToConstType.isConstQualified)
     XCTAssertFalse(constPtrToConstType.isRestrictQualified)
@@ -218,7 +239,8 @@ final class CTypeAndCursorIntegrationTests: XCTestCase {
     XCTAssertTrue(volatileIntType.isLiterallyVolatileQualified)
 
     // Test const volatile int - SHOULD be const qualified
-    let constVolatileIntCursor = try XCTUnwrap(TestHelpers.firstCursor(named: "constVolatileInt", in: tu))
+    let constVolatileIntCursor = try XCTUnwrap(
+      TestHelpers.firstCursor(named: "constVolatileInt", in: tu))
     let constVolatileIntType = try XCTUnwrap(constVolatileIntCursor.type)
     XCTAssertTrue(constVolatileIntType.isConstQualified)
     XCTAssertFalse(constVolatileIntType.isRestrictQualified)
@@ -228,7 +250,8 @@ final class CTypeAndCursorIntegrationTests: XCTestCase {
     XCTAssertTrue(constVolatileIntType.isLiterallyVolatileQualified)
 
     /// Test non-literal behavior
-    let aliasToConstVolatileIntCursor = try XCTUnwrap(TestHelpers.firstCursor(named: "aliasToConstVolatileInt", in: tu))
+    let aliasToConstVolatileIntCursor = try XCTUnwrap(
+      TestHelpers.firstCursor(named: "aliasToConstVolatileInt", in: tu))
     let aliasToConstVolatileIntType = try XCTUnwrap(aliasToConstVolatileIntCursor.type)
     XCTAssertTrue(aliasToConstVolatileIntType.isConstQualified)
     XCTAssertFalse(aliasToConstVolatileIntType.isRestrictQualified)

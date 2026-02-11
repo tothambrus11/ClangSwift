@@ -388,6 +388,10 @@ extension Cursor {
     return clang_Cursor_isNull(asClang()) != 0
   }
 
+  public var spelling: String {
+    return clang_getCursorSpelling(asClang()).asSwift()
+  }
+
   /// If cursor is a statement declaration tries to evaluate the statement and
   /// if its variable, tries to evaluate its initializer, into its
   /// corresponding type.
