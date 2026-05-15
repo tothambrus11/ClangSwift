@@ -140,7 +140,7 @@ public struct IdxDeclInfo {
   let clang: CXIdxDeclInfo
 
   /// Attached cursor with the declaration.
-  public var cursor: Cursor? {
+  public var cursor: (any Cursor)? {
     return convertCursor(clang.cursor)
   }
 

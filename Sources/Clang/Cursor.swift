@@ -18,10 +18,23 @@ import cclang
 /// `SourceLocation.cursor` maps from a physical source location to the entity
 /// that resides at that location, allowing one to map from the source code into
 /// the AST.
-public protocol Cursor: CustomStringConvertible {
+public protocol Cursor: CustomStringConvertible, Hashable {
   /// Converts this cursor value to a CXCursor value to be consumed by
   /// libclang APIs
   func asClang() -> CXCursor
+}
+
+extension Cursor {
+
+  /// Returns true iff this cursor is equal to another, by reference.
+  public static func ==(lhs: Self, rhs: Self) -> Bool {
+    return lhs.asClang() == rhs.asClang()
+  }
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(asClang().hashValue)
+  }
+
 }
 
 /// Used as the return type for `Cursor.visitChildren`. Describes what to do
@@ -50,6 +63,8 @@ extension ClangCursorBacked {
 }
 
 extension CXCursor: @retroactive CustomStringConvertible {}
+extension CXCursor: @retroactive Hashable {}
+extension CXCursor: @retroactive Equatable {}
 extension CXCursor: Cursor {
   /// Returns `self` unmodified.
   public func asClang() -> CXCursor {
@@ -58,7 +73,7 @@ extension CXCursor: Cursor {
 }
 
 /// Compares two `Cursor`s and determines if they are equivalent.
-public func == (lhs: Cursor, rhs: Cursor) -> Bool {
+public func == (lhs: any Cursor, rhs: any Cursor) -> Bool {
   return clang_equalCursors(lhs.asClang(), rhs.asClang()) != 0
 }
 
@@ -101,7 +116,7 @@ extension Cursor {
   /// If given a cursor for which there is no corresponding definition, e.g.,
   /// because there is no definition of that entity within this translation
   /// unit, returns a `NULL` cursor.
-  public var definition: Cursor? {
+  public var definition: (any Cursor)? {
     return convertCursor(clang_getCursorDefinition(asClang()))
   }
 
@@ -141,7 +156,7 @@ extension Cursor {
   /// semantic context, while the lexical context of the first `C::f` is `C`
   /// and the lexical context of the second `C::f` is the translation unit.
   /// For global declarations, the semantic parent is the translation unit.
-  public var lexicalParent: Cursor? {
+  public var lexicalParent: (any Cursor)? {
     return convertCursor(clang_getCursorLexicalParent(asClang()))
   }
 
@@ -173,7 +188,7 @@ extension Cursor {
   /// semantic context, while the lexical context of the first `C::f` is `C`
   /// and the lexical context of the second `C::f` is the translation unit.
   /// For global declarations, the semantic parent is the translation unit.
-  public var semanticParent: Cursor? {
+  public var semanticParent: (any Cursor)? {
     return convertCursor(clang_getCursorSemanticParent(asClang()))
   }
 
@@ -185,7 +200,7 @@ extension Cursor {
   /// cursor for the superclass reference. If the input cursor is a
   /// declaration or definition, it returns that declaration or definition
   /// unchanged. Otherwise, returns the `NULL` cursor.
-  public var referenced: Cursor? {
+  public var referenced: (any Cursor)? {
     return convertCursor(clang_getCursorReferenced(asClang()))
   }
 
@@ -207,8 +222,8 @@ extension Cursor {
   /// Retrieves all the children of the provided cursor.
   ///
   /// - returns: An array of `Cursors` that are children of this cursor.
-  public func children() -> [Cursor] {
-    var children = [Cursor]()
+  public func children() -> [any Cursor] {
+    var children = [any Cursor]()
     clang_visitChildrenWithBlock(asClang()) { child, _ in
       if let cursor = convertCursor(child) {
         children.append(cursor)
@@ -428,7 +443,7 @@ extension Cursor {
   /// - note: The returned value of this callback defines what the next item
   ///         visited will be. See `ChildVisitResult` for a list of possible
   ///         results.
-  public func visitChildren(_ perCursorCallback: (Cursor) -> ChildVisitResult) {
+  public func visitChildren(_ perCursorCallback: (any Cursor) -> ChildVisitResult) {
     withoutActuallyEscaping(perCursorCallback) { callback -> Void in
       clang_visitChildrenWithBlock(asClang()) {
         (thisCursor, parentCursor) -> CXChildVisitResult in
@@ -447,7 +462,7 @@ extension Cursor {
   }
 
   /// Retrieve the nil cursor, which represents no entity.
-  public static var null: Cursor {
+  public static var null: any Cursor {
     return clang_getNullCursor()
   }
 }

@@ -329,7 +329,7 @@ public class TranslationUnit {
   /// Retrieve the cursor that represents the given translation unit.
   /// The translation unit cursor can be used to start traversing the various
   /// declarations within the given translation unit.
-  public var cursor: Cursor {
+  public var cursor: any Cursor {
     return convertCursor(clang_getTranslationUnitCursor(clang))!
   }
 
@@ -353,7 +353,7 @@ public class TranslationUnit {
   /// - note: The returned value of this callback defines what the next item
   ///         visited will be. See `ChildVisitResult` for a list of possible
   ///         results.
-  public func visitChildren(_ perCursorCallback: (Cursor) -> ChildVisitResult) {
+  public func visitChildren(_ perCursorCallback: (any Cursor) -> ChildVisitResult) {
     cursor.visitChildren(perCursorCallback)
   }
 
@@ -447,7 +447,7 @@ public class TranslationUnit {
   ///
   /// - parameter tokens: The set of tokens to annotate
   /// - returns: The cursors corresponding to each token provided
-  public func annotate(tokens: [Token]) -> [Cursor] {
+  public func annotate(tokens: [Token]) -> [any Cursor] {
     var toks = tokens.map { $0.clang }
     let cursors =
       UnsafeMutablePointer<CXCursor>.allocate(capacity: toks.count)

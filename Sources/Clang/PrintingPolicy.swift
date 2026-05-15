@@ -135,7 +135,7 @@ public struct PrintingPolicy: ~Copyable {
   fileprivate let clang: CXPrintingPolicy
 
   /// Creates a new PrintingPolicy for the given cursor.
-  public init(of cursor: Cursor) {
+  public init(of cursor: any Cursor) {
     self.clang = clang_getCursorPrintingPolicy(cursor.asClang())
   }
 

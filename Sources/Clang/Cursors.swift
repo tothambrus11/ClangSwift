@@ -20,7 +20,7 @@ public struct FunctionDecl: ClangCursorBacked {
   /// Retrieve the argument cursor of a function or method.
   /// The argument cursor can be determined for calls as well as for
   /// declarations of functions or methods.
-  public func parameter(at index: Int) -> Cursor? {
+  public func parameter(at index: Int) -> (any Cursor)? {
     return convertCursor(clang_Cursor_getArgument(clang, UInt32(index)))
   }
 
@@ -62,12 +62,12 @@ extension MethodDecl {
   /// will be B's method. The client may then invoke this function again,
   /// given the previously-found overridden methods, to map out the complete
   /// method-override set.
-  public var overrides: [Cursor] {
+  public var overrides: [any Cursor] {
     var overridden: UnsafeMutablePointer<CXCursor>?
     var overrideCount = 0 as UInt32
     clang_getOverriddenCursors(clang, &overridden, &overrideCount)
     guard let overriddenPtr = overridden else { return [] }
-    var overrides = [Cursor]()
+    var overrides = [any Cursor]()
     for i in 0..<Int(overrideCount) {
       if let cursor = convertCursor(overriddenPtr[i]) {
         overrides.append(cursor)
@@ -93,7 +93,7 @@ public struct InclusionDirective: ClangCursorBacked {
 protocol RecordDecl: ClangCursorBacked {}
 extension RecordDecl {
   /// Retrieves an array of all the fields of this record type.
-  public func fields() -> [Cursor] {
+  public func fields() -> [any Cursor] {
     guard let type = type as? RecordType else { return [] }
     return type.fields()
   }
@@ -465,7 +465,7 @@ public struct CallExpr: ClangCursorBacked {
   /// Retrieve the argument cursor of a function or method.
   /// The argument cursor can be determined for calls as well as for
   /// declarations of functions or methods.
-  public func parameter(at index: Int) -> Cursor? {
+  public func parameter(at index: Int) -> (any Cursor)? {
     return convertCursor(clang_Cursor_getArgument(clang, UInt32(index)))
   }
 
@@ -482,7 +482,7 @@ public struct ObjCMessageExpr: ClangCursorBacked {
   /// Retrieve the argument cursor of a function or method.
   /// The argument cursor can be determined for calls as well as for
   /// declarations of functions or methods.
-  public func parameter(at index: Int) -> Cursor? {
+  public func parameter(at index: Int) -> (any Cursor)? {
     return convertCursor(clang_Cursor_getArgument(clang, UInt32(index)))
   }
 
@@ -2032,7 +2032,7 @@ public struct OverloadCandidate: ClangCursorBacked {
 }
 
 /// Converts a CXCursor to a Cursor, returning `nil` if it was unsuccessful
-func convertCursor(_ clang: CXCursor) -> Cursor? {
+func convertCursor(_ clang: CXCursor) -> (any Cursor)? {
   if clang_Cursor_isNull(clang) != 0 { return nil }
   switch clang.kind {
 

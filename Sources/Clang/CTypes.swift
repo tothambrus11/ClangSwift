@@ -23,15 +23,15 @@ public struct RecordType: ClangTypeBacked {
   }
 
   /// Gathers and returns all the fields of this record.
-  public func fields() -> [Cursor] {
-    let fields = Box([Cursor]())
+  public func fields() -> [any Cursor] {
+    let fields = Box([any Cursor]())
     let fieldsRef = Unmanaged.passUnretained(fields)
     let opaque = fieldsRef.toOpaque()
     clang_Type_visitFields(
       asClang(),
       { (child, opaque) -> CXVisitorResult in
         guard let opaque else { return CXVisit_Break }
-        let fieldsRef = Unmanaged<Box<[Cursor]>>.fromOpaque(opaque)
+        let fieldsRef = Unmanaged<Box<[any Cursor]>>.fromOpaque(opaque)
         let fields = fieldsRef.takeUnretainedValue()
         if let cursor = convertCursor(child) {
           fields.value.append(cursor)

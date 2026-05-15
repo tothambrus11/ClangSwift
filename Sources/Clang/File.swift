@@ -19,12 +19,16 @@ public struct UniqueFileID: Hashable {
 }
 
 /// A particular source file that is part of a translation unit.
-public struct File: Hashable {
+public struct File: Hashable, CustomStringConvertible {
   let clang: CXFile
 
   /// Retrieve the complete file and path name of the given file.
   public var name: String {
     return clang_getFileName(clang).asSwift()
+  }
+
+  public var description: String {
+    return name
   }
 
   /// Retrieve the last modification time of the given file.

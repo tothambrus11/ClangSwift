@@ -75,7 +75,7 @@ func convertToken(_ clang: CXToken) -> Token {
   }
 }
 
-public struct SourceLocation {
+public struct SourceLocation: CustomStringConvertible, Hashable {
   let clang: CXSourceLocation
 
   /// Creates a SourceLocation.
@@ -122,7 +122,7 @@ public struct SourceLocation {
             offset: Int(o))
   }
   
-  public func cursor(in translationUnit: TranslationUnit) -> Cursor? {
+  public func cursor(in translationUnit: TranslationUnit) -> (any Cursor)? {
     return clang_getCursor(translationUnit.clang, clang)
   }
   
@@ -156,10 +156,32 @@ public struct SourceLocation {
   public func asClang() -> CXSourceLocation {
     return self.clang
   }
+
+  /// The description with file, line, and column.
+  public var description: String {
+    return "\(file):\(line):\(column)"
+  }
+
+  /// The description without the file name.
+  public var shortDescription: String {
+    return "\(line):\(column)"
+  }
+
+  /// Hashes the file identity and offset.
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(file)
+    hasher.combine(offset)
+  }
+
+  /// Returns true iff the file and offset are the same in `l` and `r`.
+  public static func ==(l: Self, r: Self) -> Bool {
+    return l.file == r.file && l.offset == r.offset
+  }
+
 }
 
 /// Represents a half-open character range in the source code.
-public struct SourceRange {
+public struct SourceRange: CustomStringConvertible, Hashable {
   let clang: CXSourceRange
 
   /// Creates a SourceRange.
@@ -194,4 +216,23 @@ public struct SourceRange {
   public func asClang() -> CXSourceRange {
     return self.clang
   }
+
+  public var description: String {
+    return "\(start)-\(end.shortDescription)"
+  }
+
+  /// Hashes the start and end location and the file identity.
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(start.file.uniqueID)
+    hasher.combine(start.offset)
+    hasher.combine(end.offset)
+  }
+
+  /// Returns true iff the start and end offsets and the file identity are the sane in `l` and `r`.
+  public static func ==(l: Self, r: Self) -> Bool {
+    return l.start.offset == r.start.offset && 
+      l.end.offset == r.end.offset &&
+      l.start.file == r.start.file
+  }
+
 }

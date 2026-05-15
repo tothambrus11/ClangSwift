@@ -113,7 +113,7 @@ extension CType {
   }
 
   /// Retrieves the cursor for the declaration of the receiver.
-  public var declaration: Cursor? {
+  public var declaration: (any Cursor)? {
     return convertCursor(clang_getTypeDeclaration(asClang()))
   }
 
