@@ -25,8 +25,8 @@ public struct FunctionDecl: ClangCursorBacked {
   }
 
   /// Retrieve the return type of the function.
-  public var resultType: CType? {
-    return convertType(clang_getCursorResultType(clang))
+  public var resultType: CType {
+    return convertType(clang_getCursorResultType(clang))!
   }
 
   /// Tells if the function declaration is inlined.
@@ -93,18 +93,32 @@ public struct InclusionDirective: ClangCursorBacked {
 protocol RecordDecl: ClangCursorBacked {}
 extension RecordDecl {
   /// Retrieves an array of all the fields of this record type.
-  public func fields() -> [any Cursor] {
+  func _fields() -> [any Cursor] {
     guard let type = type as? RecordType else { return [] }
     return type.fields()
   }
 }
 
 public struct StructDecl: RecordDecl {
+
   let clang: CXCursor
+
+  /// Retrieves an array of all the fields of this record type.
+  public func fields() -> [any Cursor] {
+    _fields()
+  }
+
 }
 
 public struct ClassDecl: RecordDecl {
+
   let clang: CXCursor
+
+  /// Retrieves an array of all the fields of this record type.
+  public func fields() -> [any Cursor] {
+    _fields()
+  }
+
 }
 
 public struct EnumConstantDecl: ClangCursorBacked {

@@ -273,8 +273,8 @@ public struct FunctionProtoType: ClangTypeBacked {
 public struct ConstantArrayType: ClangTypeBacked {
   let clang: CXType
 
-  public var element: CType? {
-    return convertType(clang_getArrayElementType(clang))
+  public var element: CType {
+    return convertType(clang_getArrayElementType(clang))!
   }
 
   public var count: Int32 {
@@ -451,7 +451,6 @@ func convertType(_ clang: CXType) -> CType? {
   switch clang.kind {
   case CXType_Invalid: return nil
   case CXType_Unexposed: return UnexposedType(clang: clang)
-  case CXType_FirstBuiltin: return UnexposedType(clang: clang)
   case CXType_Void: return VoidType(clang: clang)
   case CXType_Bool: return BoolType(clang: clang)
   case CXType_Char_U: return Char_UType(clang: clang)
